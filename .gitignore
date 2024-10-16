@@ -1,0 +1,114 @@
+# 忽略以下目录
+/PCP8908R1.cache
+/PCP8908R1.gen
+/PCP8908R1.hw
+/PCP8908R1.runs
+/PCP8908R1.sim
+/PCP8908R1.ip_user_files
+#
+
+# !PCP8908R1.xpr
+# 忽略当前目录开头为vivado*的文件
+vivado*
+#忽略此文件
+ip_upgrade.log
+
+
+# #########################################################################################################
+# ##	This is an example .gitignore file for Vivado, please treat it as an example as 
+# ##	it might not be complete. In addition, XAPP 1165 should be followed.
+# #########################################################################################################
+# #########
+# #Exclude all
+# #########
+# /PCP8908R1.cache
+# /PCP8908R1.gen
+# /PCP8908R1.hw
+# #/PCP8908R1.ip_user_files
+# /PCP8908R1.sim
+# /PCP8908R1.runs
+# *
+# !*/
+# .gitignore
+# ###########################################################################
+# ##	VIVADO
+# ###########################################################################
+# #########
+# #Source files:
+# #########
+# #Do NOT ignore VHDL, Verilog, block diagrams or EDIF files.
+
+# !*.bd
+# !*.edif
+# #########
+# #IP files
+# #########
+# #.xci: synthesis and implemented not possible - you need to return back to the previous version to generate output products
+# #.xci + .dcp: implementation possible but not re-synthesis
+# #*.xci(www.spiritconsortium.org)
+# !*.xci
+# #*.dcp(checkpoint files)
+# !*.dcp
+# !*.vds
+# !*.pb
+# #All bd comments and layout coordinates are stored within .ui
+# !*.ui
+# !*.ooc
+# #########
+# #System Generator
+# #########
+# !*.mdl
+# !*.slx
+# !*.bxml
+# #########
+# #Simulation logic analyzer
+# #########
+# !*.wcfg
+# !*.coe
+# #########
+# #MIG
+# #########
+# !*.prj
+# !*.mem
+# #########
+# #Project files
+# #########
+# #XPR  +  *.XML ? XPR (Files are merged into a single XPR file for 2014.1 version)
+# #Do NOT ignore *.xpr files
+# !*.xpr
+# #Include *.xml files for 2013.4 or earlier version
+# !*.xml
+# #########
+# #Constraint files
+# #########
+# #Do NOT ignore *.xdc files
+# !*.xdc
+# #########
+# #TCL - files
+# #########
+# *.tcl
+# #########
+# #Journal - files
+# #########
+# !*.jou
+# #########
+# #Reports
+# #########
+# !*.rpt
+# *.txt
+# !*.vdi
+# #########
+# #C-files
+# #########
+# !*.c
+# !*.h
+# !*.elf
+# !*.bmm
+# !*.xmp
+# *.jou
+
+# *.xml
+# *.xci
+# *.ui
+# !*.sv
+# !*.v
