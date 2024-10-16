@@ -39,6 +39,9 @@ module sys_top(
     wire  [31:0] BUS_DATA_WR;
     wire  [31:0] BUS_DATA_RD;
 
+    //
+    wire  [13:0]       sync_porta_data    	;  //AD转换模块的数据
+    wire  [13:0]       sync_portb_data    	;  //AD转换模块的数据
     assign rst_n =  sys_rst_n && locked; 
     assign ad_shdna = 1'b1;
     assign ad_shdnb = 1'b1;
@@ -80,6 +83,26 @@ fsmc_bridge u_fsmc_bridge(
  //时钟信号缓冲
     BUFG bufa (.I(clkA_65m),.O(ad_porta_clk));
     BUFG bufb (.I(clkB_65m),.O(ad_portb_clk));
+
+//
+adc_data_sync #(
+    ._DATA_WIDTH(14)
+) u_adc_porta(
+    .clk_sync(clk_sync),
+    .sys_rst(sys_rst),
+    .adc_data(ad_porta_data),
+    .sync_data(sync_porta_data)
+);
+
+adc_data_sync #(
+    ._DATA_WIDTH(14)
+) u_adc_portb(
+    .clk_sync(clk_sync),
+    .sys_rst(sys_rst),
+    .adc_data(ad_portb_data),
+    .sync_data(sync_portb_data)
+);
+
 
 // compile
 assign  BUS_DATA_RD = ad_porta_data;
