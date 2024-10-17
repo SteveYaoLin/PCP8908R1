@@ -20,7 +20,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module adc_dram(
+module adc_dram #(
+    parameter _COUNTER_WIDTH = 7
+)
+    (
     input adc_clk,
     input sys_clk,
     input rst,
@@ -43,13 +46,13 @@ module adc_dram(
   wire  almost_empty;            
   wire  valid;                          
   wire  underflow;                  
-  wire  [31:0] rd_data_count;          
-  wire  [31:0] wr_data_count;          
+  wire  [_COUNTER_WIDTH -1 :0] rd_data_count;          
+  wire  [_COUNTER_WIDTH -1 :0] wr_data_count;          
   wire  wr_rst_busy;              
   wire  rd_rst_busy;
 
 fifo_generator_0 u_fifo_generator_0 (
-  /*input  */.rst(rst),                              
+  /*input  */.rst(~rst),                              
   /*input  */.wr_clk(adc_clk),                       
   /*input  */.rd_clk(sys_clk),                       
   /*input  */.din(sync_data),                       
