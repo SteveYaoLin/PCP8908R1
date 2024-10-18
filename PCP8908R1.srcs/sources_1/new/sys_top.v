@@ -30,7 +30,7 @@ module sys_top(
 
     //信号定义
     wire        clk_65m;            //65MHz时钟
-    wire        clk_100m;            //100MHz时钟
+    wire        clk_130m;            //100MHz时钟
     wire        clkA_65m;             //65MHz时钟
     wire        clkB_65m;             //65MHz时钟
     wire        locked;              //PLL锁定信号
@@ -39,7 +39,7 @@ module sys_top(
 //   wire  [3:0]  BUS_BE；
     wire  [31:0] BUS_DATA_WR;
     wire  [31:0] BUS_DATA_RD;
-
+    reg temp_valid;
     //AD转换模块的接口
     reg adc_porta_en  = 1'b1;
     reg adc_portb_en  = 1'b1;
@@ -60,10 +60,10 @@ module sys_top(
     clk_wiz_0 u_pll
     (
     //时钟输出
-    .clk_out1(clk_65m),
+    .clk_out1(clk_130m),
     .clk_out2(clkA_65m),
     .clk_out3(clkB_65m),
-    .clk_out4(clk_100m),
+//    .clk_out4(clk_130m),
     //状态和控制信号               
     .resetn(sys_rst_n), 
     .locked(locked),
@@ -98,7 +98,7 @@ fsmc_bridge u_fsmc_bridge(
 adc_data_sync #(
     ._DATA_WIDTH(14)
 ) u_adc_sync_a(
-    .clk_sync(clk_65m),
+    .clk_sync(clk_130m),
     .sys_rst(rst_n),
     .adc_data(ad_porta_data),
     .sync_data(sync_porta_data)
@@ -107,15 +107,15 @@ adc_data_sync #(
 adc_data_sync #(
     ._DATA_WIDTH(14)
 ) u_adc_sync_b(
-    .clk_sync(clk_65m),
+    .clk_sync(clk_130m),
     .sys_rst(rst_n),
     .adc_data(ad_portb_data),
     .sync_data(sync_portb_data)
 );
 
 adc_dram u1(
-    .adc_clk        (clk_65m),
-    .sys_clk        (clk_100m),
+    .adc_clk        (clkA_65m),
+    .sys_clk        (clk_130m),
     .rst            (rst_n),
     .sync_data     (sync_porta_data),
     .fifo_data      (fifo_data_porta),
@@ -124,8 +124,8 @@ adc_dram u1(
     );
 
 adc_dram u2(
-    .adc_clk        (clk_65m),
-    .sys_clk        (clk_100m),
+    .adc_clk        (clkB_65m),
+    .sys_clk        (clk_130m),
     .rst            (rst_n),
     .sync_data     (sync_portb_data),
     .fifo_data      (fifo_data_portb),
@@ -138,8 +138,8 @@ assign  BUS_DATA_RD = ad_porta_data;
 
 //test creat enable signal
 reg [15:0] temp_cnt ;
-reg temp_valid;
-always @(posedge clk_100m or negedge rst_n) begin
+
+always @(posedge clk_130m or negedge rst_n) begin
     if (!rst_n) begin
         temp_cnt <= 16'd0;
         temp_valid <= 1'b0;
