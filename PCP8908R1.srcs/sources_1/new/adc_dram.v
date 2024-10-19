@@ -93,13 +93,15 @@ always @(posedge sys_clk or negedge rst) begin
     // else if (!empty) begin
     //     rd_en <= 1'b1;
     // end
-    else if (rd_en) begin
+    else if (~empty) begin
         rd_en <= 1'b1;
     end
     else if (empty)   begin
         rd_en <= 1'b0;
     end
 end
+//create rd_data signal
+
 assign cycle_valid = valid;
 
 endmodule

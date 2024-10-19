@@ -86,12 +86,22 @@ module sys_top_tb;
   // always #7.692 fmc_clk = ~fmc_clk;  // 65M FMC clock
 
   // Stimulus for ADC data
-  always begin
-    #30;
-    ad_portb_data = $random % (1 << 14);  // Random 14-bit data for portb
-    ad_ofb = ~ad_ofb;  // Toggle enable signal
-  end
+  // always begin
+  //   #30;
+  //   ad_portb_data = $random % (1 << 14);  // Random 14-bit data for portb
+  //   ad_ofb = ~ad_ofb;  // Toggle enable signal
+  // end
 
+  always @(posedge clk_65mB or negedge sys_rst_n) begin
+    if (!sys_rst_n) begin
+      ad_portb_data = 0;
+      ad_ofb = 0;
+    end
+    else begin
+      ad_portb_data = ad_portb_data + 1;  // Random 14-bit data for porta
+      // ad_ofa = ~ad_ofa;  // Toggle enable signal
+    end
+  end
   // Generate sine wave signal based on 65M clock (13 clock cycles per period)
   real sine_wave_real;
   integer i;

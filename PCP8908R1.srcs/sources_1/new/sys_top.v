@@ -73,7 +73,7 @@ module sys_top(
   
     //instance bus bridge
 fsmc_bridge u_fsmc_bridge(
-	.sys_clk(sys_clk),
+	.sys_clk(clk_130m),
 	.rst_n(rst_n),
 	
 	//fsmc总线相关信号
@@ -98,7 +98,7 @@ fsmc_bridge u_fsmc_bridge(
 adc_data_sync #(
     ._DATA_WIDTH(14)
 ) u_adc_sync_a(
-    .clk_sync(clk_130m),
+    .clk_sync(clkA_65m),
     .sys_rst(rst_n),
     .adc_data(ad_porta_data),
     .sync_data(sync_porta_data)
@@ -107,7 +107,7 @@ adc_data_sync #(
 adc_data_sync #(
     ._DATA_WIDTH(14)
 ) u_adc_sync_b(
-    .clk_sync(clk_130m),
+    .clk_sync(clkB_65m),
     .sys_rst(rst_n),
     .adc_data(ad_portb_data),
     .sync_data(sync_portb_data)
