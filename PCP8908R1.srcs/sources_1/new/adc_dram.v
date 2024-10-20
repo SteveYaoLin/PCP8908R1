@@ -134,17 +134,18 @@ always @(posedge sys_clk or negedge rst) begin
     if (rst == 1'b0) begin
         rd_en <= 1'b0;
     end
+    //else if ((rd_rst_busy == 1'b0)&&(fifo_enbale == 1'b1)) begin
     else if (rd_rst_busy == 1'b0) begin
-        if (almost_full == 1'b1) begin
+        if (!empty_d1) begin
             // rd_en <= fifo_enbale;
             rd_en <= 1'b1;
         end
-        // else if (almost_empty) begin
-        //     rd_en <= 1'b0;
-        // end
-        else if (rd_en) begin
-            rd_en <= 1'b1;
+        else if (empty)   begin
+        rd_en <= 1'b0;
         end
+    end
+    else if (rd_rst_busy == 1'b1) begin
+        rd_en <= 1'b0;
     end
     // else if (!empty) begin
     //     rd_en <= 1'b1;
@@ -152,9 +153,7 @@ always @(posedge sys_clk or negedge rst) begin
     // else if (~empty) begin
     //     rd_en <= 1'b1;
     // end
-    else if (empty)   begin
-        rd_en <= 1'b0;
-    end
+    
 end
 //create rd_data signal
 

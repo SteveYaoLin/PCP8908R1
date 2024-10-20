@@ -113,11 +113,11 @@ module checkdata_tb;
   end
   //checkout ADCB FIFO READ DATA
     // initial begin
-      always @(posedge SYS_CLOCK ) begin
-        
-      if `ADCB_FIFO_READ == 1'b1 begin
-      $display("Time is %0t,FIFO READ DATA is %0d",$realtime,`ADCB_FIFO_READ_DATA);
-    end
+      always @(posedge `SYS_CLOCK ) begin  
+        if (`ADCB_FIFO_READ == 1'b1) begin
+        $display("Time is %0t,FIFO READ DATA is %0d",$realtime,`ADCB_FIFO_READ_DATA);
+        end
+      end
 
         
    
