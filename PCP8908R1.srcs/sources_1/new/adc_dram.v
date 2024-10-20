@@ -107,7 +107,7 @@ always @(posedge adc_clk or negedge rst) begin
         wr_en <= 1'b0;
         // rd_en <= 1'b0;
     end
-    else if (wr_rst_busy == 1'b0)begin
+    else if ((wr_rst_busy == 1'b0)&& (fifo_enbale) )begin
         // if (empty_d1 == 1'b1)begin
         //     wr_en <= fifo_enbale;
         // end
@@ -116,7 +116,7 @@ always @(posedge adc_clk or negedge rst) begin
         end
         else if (empty_d1) begin
             // wr_en <= 1'b0;
-            wr_en <= fifo_enbale;
+            wr_en <= 1'b1;
         end
         else if (wr_en) begin
             wr_en <= 1'b1;
@@ -135,7 +135,7 @@ always @(posedge sys_clk or negedge rst) begin
         rd_en <= 1'b0;
     end
     else if (rd_rst_busy == 1'b0) begin
-        if (almost_full_d0 == 1'b1) begin
+        if (almost_full == 1'b1) begin
             // rd_en <= fifo_enbale;
             rd_en <= 1'b1;
         end
