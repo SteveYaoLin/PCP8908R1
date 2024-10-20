@@ -51,6 +51,12 @@ module adc_dram #(
   wire  wr_rst_busy;              
   wire  rd_rst_busy;
 
+//reg define
+reg        empty_d0;
+reg        empty_d1;
+reg        almost_full_d0;
+// reg        almost_full_d1;
+
 fifo_generator_0 u_fifo_generator_0 (
   /*input  */.rst(~rst),                              
   /*input  */.wr_clk(adc_clk),                       
@@ -73,15 +79,53 @@ fifo_generator_0 u_fifo_generator_0 (
   /*output */.rd_rst_busy(rd_rst_busy)               
 );
 
+always @(posedge adc_clk or negedge rst) begin
+    if(rst == 1'b0) begin
+        empty_d0 <= 1'b0;
+        empty_d1 <= 1'b0;
+    end
+    else begin
+        empty_d0 <= empty;
+        empty_d1 <= empty_d0;
+    end
+end
+
+always @(posedge sys_clk or negedge rst) begin
+    if(rst == 1'b0) begin
+        almost_full_d0 <= 1'b0;
+        // full_d1 <= 1'b0;
+    end
+    else begin
+        almost_full_d0 <= full;
+        // full_d1 <= full_d0;
+    end
+end  
+
 //create wr_end rd_en signal
 always @(posedge adc_clk or negedge rst) begin
     if (rst == 1'b0) begin
         wr_en <= 1'b0;
         // rd_en <= 1'b0;
     end
-    else begin
-        wr_en <= fifo_enbale;
+    else if (wr_rst_busy == 1'b0)begin
+        // if (empty_d1 == 1'b1)begin
+        //     wr_en <= fifo_enbale;
+        // end
+        if (almost_full_d0) begin
+            wr_en <= 1'b1;
+        end
+        else if (empty_d1) begin
+            // wr_en <= 1'b0;
+            wr_en <= fifo_enbale;
+        end
+        else if (wr_en) begin
+            wr_en <= 1'b1;
+        end
         // rd_en <= ~fifo_enbale;
+    end
+    else begin
+        wr_en <= 1'b0;
+        // rd_en <= 1'b0;
     end
 end
 
@@ -89,6 +133,18 @@ end
 always @(posedge sys_clk or negedge rst) begin
     if (rst == 1'b0) begin
         rd_en <= 1'b0;
+    end
+    else if (rd_rst_busy == 1'b0) begin
+        if (almost_full_d0 == 1'b1) begin
+            // rd_en <= fifo_enbale;
+            rd_en <= 1'b1;
+        end
+        else if (almost_empty) begin
+            rd_en <= 1'b0;
+        end
+        else if (rd_en) begin
+            rd_en <= 1'b1;
+        end
     end
     // else if (!empty) begin
     //     rd_en <= 1'b1;
