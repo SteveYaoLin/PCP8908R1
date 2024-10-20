@@ -146,7 +146,7 @@ always @(posedge clk_130m or negedge rst_n) begin
     end
     else if (temp_cnt == 16'd10000) begin
         temp_cnt <= temp_cnt;
-        temp_valid <= 1'b1;
+        // temp_valid <= 1'b1;
     end
     else begin
         temp_cnt <= temp_cnt + 1'b1;

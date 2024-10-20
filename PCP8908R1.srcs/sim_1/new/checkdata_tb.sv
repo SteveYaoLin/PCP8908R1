@@ -24,6 +24,7 @@
 `define   ADCA_CLK `ADCA.adc_clk
 `define   ADCB_CLK `ADCB.adc_clk
 
+
 `define  ADCA_FIFO_BEGIN        `ADCA.fifo_enbale
 `define  ADCB_FIFO_BEGIN        `ADCB.fifo_enbale
 `define  ADCB_FIFO_READ         `ADCB.rd_en
@@ -111,8 +112,10 @@ module checkdata_tb;
 
   end
   //checkout ADCB FIFO READ DATA
-    initial begin
-      @(posedge `ADCB_FIFO_READ )
+    // initial begin
+      always @(posedge SYS_CLOCK ) begin
+        
+      if `ADCB_FIFO_READ == 1'b1 begin
       $display("Time is %0t,FIFO READ DATA is %0d",$realtime,`ADCB_FIFO_READ_DATA);
     end
 

@@ -139,9 +139,9 @@ always @(posedge sys_clk or negedge rst) begin
             // rd_en <= fifo_enbale;
             rd_en <= 1'b1;
         end
-        else if (almost_empty) begin
-            rd_en <= 1'b0;
-        end
+        // else if (almost_empty) begin
+        //     rd_en <= 1'b0;
+        // end
         else if (rd_en) begin
             rd_en <= 1'b1;
         end
@@ -149,9 +149,9 @@ always @(posedge sys_clk or negedge rst) begin
     // else if (!empty) begin
     //     rd_en <= 1'b1;
     // end
-    else if (~empty) begin
-        rd_en <= 1'b1;
-    end
+    // else if (~empty) begin
+    //     rd_en <= 1'b1;
+    // end
     else if (empty)   begin
         rd_en <= 1'b0;
     end
