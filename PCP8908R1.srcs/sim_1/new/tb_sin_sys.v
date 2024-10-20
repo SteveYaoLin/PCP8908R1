@@ -61,7 +61,7 @@ module sys_top_tb;
     clk_50m = 0;
     clk_65mA = 0;
     clk_65mB = 0;
-    sys_rst_n = 0;
+    sys_rst_n = 1;
     ad_porta_data = 0;
     ad_portb_data = 0;
     ad_ofa = 0;
@@ -70,7 +70,8 @@ module sys_top_tb;
     fmc_clk = 0;
     fmc_nl = 1;
     once = 0;
-    
+    #100;
+    sys_rst_n = 0;  // De-assert reset after 100ns
     #100;
     sys_rst_n = 1;  // De-assert reset after 100ns
   end
