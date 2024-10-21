@@ -50,10 +50,13 @@ module sys_top(
     wire  [13:0]       fifo_data_porta    	;  //AD转换模块的数据
     wire  [13:0]       fifo_data_portb    	;  //AD转换模块的数据
 
+    wire  [15:0]       module_status;
+    wire  [15:0]       module_control;
+    //assign BUS_BE = 4'b1111;
 
     assign rst_n =  sys_rst_n && locked; 
-    assign ad_shdna = 1'b1;
-    assign ad_shdnb = 1'b1;
+    assign ad_shdna = module_control[0];
+    assign ad_shdnb = module_control[1];
     // assign ad_clk =  clkB_65m; 
 
     //PLL模块
@@ -63,6 +66,7 @@ module sys_top(
     .clk_out1(clk_130m),
     .clk_out2(clkA_65m),
     .clk_out3(clkB_65m),
+    .clk_out4(clk_65m),
 //    .clk_out4(clk_130m),
     //状态和控制信号               
     .resetn(sys_rst_n), 
@@ -73,7 +77,7 @@ module sys_top(
   
     //instance bus bridge
 fsmc_bridge u_fsmc_bridge(
-	.sys_clk(clk_130m),
+	.sys_clk(clk_65m),
 	.rst_n(rst_n),
 	
 	//fsmc总线相关信号
@@ -90,6 +94,17 @@ fsmc_bridge u_fsmc_bridge(
 	.BUS_DATA_WR(BUS_DATA_WR),
 	.BUS_DATA_RD(BUS_DATA_RD)
 );
+
+BUS u_bus(
+    .io_clk(clk_65m),
+    .io_be(2'b11),
+    .io_addr(BUS_ADDR),
+    .io_data_i(BUS_DATA_WR),
+    .io_data_o(BUS_DATA_RD),
+    .module_status(module_status),
+    .module_control(module_control)
+);
+
  //时钟信号缓冲
     BUFG bufa (.I(clkA_65m),.O(ad_porta_clk));
     BUFG bufb (.I(clkB_65m),.O(ad_portb_clk));
@@ -134,7 +149,7 @@ adc_dram u2(
     );
 
 // compile
-assign  BUS_DATA_RD = ad_porta_data;
+//assign  BUS_DATA_RD = ad_porta_data;
 
 //test creat enable signal
 reg [15:0] temp_cnt ;
