@@ -128,7 +128,7 @@ adc_data_sync #(
     .sync_data(sync_portb_data)
 );
 
-adc_dram u1(
+adc_fifo_ctrl u1(
     .adc_clk        (clkA_65m),
     .sys_clk        (clk_130m),
     .rst            (rst_n),
@@ -138,7 +138,7 @@ adc_dram u1(
     .cycle_valid    ()
     );
 
-adc_dram u2(
+adc_fifo_ctrl u2(
     .adc_clk        (clkB_65m),
     .sys_clk        (clk_130m),
     .rst            (rst_n),

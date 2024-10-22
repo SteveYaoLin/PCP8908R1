@@ -21,7 +21,7 @@
 
 
 module adc_dram #(
-    parameter _COUNTER_WIDTH = 7
+    parameter _COUNTER_WIDTH = 14
 )
     (
     input adc_clk,

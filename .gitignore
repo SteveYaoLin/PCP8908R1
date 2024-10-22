@@ -2,7 +2,7 @@
 /PCP8908R1.cache
 /PCP8908R1.gen
 /PCP8908R1.hw
-/PCP8908R1.runs
+/PCP8908R1.runs/*/*
 /PCP8908R1.sim
 /PCP8908R1.ip_user_files
 #
@@ -13,7 +13,9 @@ vivado*
 #忽略此文件
 ip_upgrade.log
 
-
+# !/PCP8908R1.runs/impl_1/sys_top.bit
+!PCP8908R1.runs/impl_1/sys_top.bit
+# !vivado.jou
 # #########################################################################################################
 # ##	This is an example .gitignore file for Vivado, please treat it as an example as 
 # ##	it might not be complete. In addition, XAPP 1165 should be followed.

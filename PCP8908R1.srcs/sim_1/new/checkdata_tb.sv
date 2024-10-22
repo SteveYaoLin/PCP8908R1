@@ -29,7 +29,10 @@
 `define  ADCB_FIFO_BEGIN        `ADCB.fifo_enbale
 `define  ADCB_FIFO_READ         `ADCB.rd_en
 `define  ADCB_FIFO_READ_DATA    `ADCB.fifo_data
+
+parameter _FIFO_DEPTH = 16384;
 module checkdata_tb;
+
 
   // Inputs
   reg sys_clk;
@@ -97,17 +100,20 @@ module checkdata_tb;
     end
     else if (`ADCB_FIFO_BEGIN == 1'b1) begin
       ad_portb_data = ad_portb_data + 1;  // Random 14-bit data for porta
-      delay_cnt_adcb <= 3'h4;
+      // delay_cnt_adcb <= 3'h4;
       // $display("+");
     end
-    else if  ((`ADCB_FIFO_BEGIN == 1'b0)&& |delay_cnt_adcb )begin
-        ad_portb_data <= ad_portb_data + 1; 
-        delay_cnt_adcb <= delay_cnt_adcb -1;
+    // else if  ((`ADCB_FIFO_BEGIN == 1'b0)&& |delay_cnt_adcb )begin
+    //     ad_portb_data <= ad_portb_data + 1; 
+    //     delay_cnt_adcb <= delay_cnt_adcb -1;
         
-    end
-    else if  ((`ADCB_FIFO_BEGIN == 1'b0)&& (|delay_cnt_adcb == 0) )begin
+    // end
+    else if  ((|ad_portb_data)&(ad_portb_data < (_FIFO_DEPTH+300)))begin
       // ad_ofa = ~ad_ofa;  // Toggle enable signal
-      ad_portb_data <= 0 ;
+      ad_portb_data <= ad_portb_data + 1;
+    end
+    else begin
+      ad_portb_data <= 0;
     end
 
   end
@@ -145,7 +151,7 @@ module checkdata_tb;
     @(posedge `ADCB_CLK )
      force `ADCB_FIFO_BEGIN = 1;
       $display("+");
-    #10000;
+    #100;
     @(posedge `ADCB_CLK )
      force `ADCB_FIFO_BEGIN = 0;
      $display("end");
