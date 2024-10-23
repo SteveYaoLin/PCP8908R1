@@ -1,4 +1,17 @@
 `timescale 1ns / 1ps
+`define  ADCA   checkdata_tb.uut.u1
+`define  ADCB   checkdata_tb.uut.u2
+`define   SYS_CLOCK checkdata_tb.uut.clk_130m
+`define   ADCA_CLK `ADCA.adc_clk
+`define   ADCB_CLK `ADCB.adc_clk
+
+
+`define  ADCA_FIFO_BEGIN        `ADCA.fifo_enbale
+`define  ADCB_FIFO_BEGIN        `ADCB.fifo_enbale
+`define  ADCB_FIFO_READ         `ADCB.rd_en
+`define  ADCB_FIFO_READ_DATA    `ADCB.fifo_data
+
+parameter _FIFO_DEPTH = 16384;
 
 module sys_top_tb;
 
@@ -59,8 +72,8 @@ module sys_top_tb;
   initial begin
     sys_clk = 0;
     clk_50m = 0;
-    clk_65mA = 0;
-    clk_65mB = 0;
+    // clk_65mA = 0;
+    // clk_65mB = 0;
     sys_rst_n = 1;
     ad_porta_data = 0;
     ad_portb_data = 0;
@@ -72,16 +85,26 @@ module sys_top_tb;
     once = 0;
     #100;
     sys_rst_n = 0;  // De-assert reset after 100ns
+
     #100;
     sys_rst_n = 1;  // De-assert reset after 100ns
+    #6000;
+    @(posedge `ADCB_CLK )
+     force `ADCB_FIFO_BEGIN = 1;
+      $display("+");
+    #100;
+    @(posedge `ADCB_CLK )
+     force `ADCB_FIFO_BEGIN = 0;
+     $display("end");
+
   end
 
   // Generate 50M clock
   always #10 sys_clk = ~sys_clk;  // 50M clock -> period = 20ns (T/2 = 10ns)
 
   // Generate 65M clocks for ADC
-  always #7.692 clk_65mA = ~clk_65mA;  // 65M clock A -> period = 15.38ns (T/2 = 7.692ns)
-  always #7.692 clk_65mB = ~clk_65mB;  // 65M clock B -> period = 15.38ns (T/2 = 7.692ns)
+  // always #7.692 clk_65mA = ~clk_65mA;  // 65M clock A -> period = 15.38ns (T/2 = 7.692ns)
+  // always #7.692 clk_65mB = ~clk_65mB;  // 65M clock B -> period = 15.38ns (T/2 = 7.692ns)
 
   // Generate FMC clock (Assume it's 65M for this example)
   // always #7.692 fmc_clk = ~fmc_clk;  // 65M FMC clock
@@ -93,7 +116,14 @@ module sys_top_tb;
   //   ad_ofb = ~ad_ofb;  // Toggle enable signal
   // end
 
-  always @(posedge clk_65mB or negedge sys_rst_n) begin
+    //checkout ADCB FIFO READ DATA
+      always @(posedge `SYS_CLOCK ) begin  
+        if (`ADCB_FIFO_READ == 1'b1) begin
+        $display("Time is %0t,FIFO READ DATA is %0d",$realtime,`ADCB_FIFO_READ_DATA);
+        end
+      end
+
+  always @(posedge ad_portb_clk or negedge sys_rst_n) begin
     if (!sys_rst_n) begin
       ad_portb_data = 0;
       ad_ofb = 0;

@@ -43,7 +43,7 @@ module sys_top(
     //AD转换模块的接口
     reg adc_porta_en  = 1'b1;
     reg adc_portb_en  = 1'b1;
-
+    reg [15:0] temp_cnt ;
     //
     wire  [13:0]       sync_porta_data    	;  //AD转换模块的数据
     wire  [13:0]       sync_portb_data    	;  //AD转换模块的数据
@@ -52,6 +52,17 @@ module sys_top(
 
     wire  [15:0]       module_status;
     wire  [15:0]       module_control;
+
+    wire fifo_adc_porta_sync;
+    wire fifo_adc_portb_sync;
+    wire fifo_adc_porta_last;
+    wire fifo_adc_portb_last;
+
+    wire [31:0]m_axis_data_tdata;
+    wire [23:0]m_axis_data_tuser;
+    wire m_axis_data_tvalid;
+    wire m_axis_data_tlast;
+
     //assign BUS_BE = 4'b1111;
 
     assign rst_n =  sys_rst_n && locked; 
@@ -101,7 +112,8 @@ BUS u_bus(
     .io_addr(BUS_ADDR),
     .io_data_i(BUS_DATA_WR),
     .io_data_o(BUS_DATA_RD),
-    .module_status(module_status),
+    // .module_status(module_status),
+    .module_status(m_axis_data_tdata),
     .module_control(module_control)
 );
 
@@ -129,30 +141,60 @@ adc_data_sync #(
 );
 
 adc_fifo_ctrl u1(
-    .adc_clk        (clkA_65m),
-    .sys_clk        (clk_130m),
-    .rst            (rst_n),
-    .sync_data     (sync_porta_data),
-    .fifo_data      (fifo_data_porta),
-    .fifo_enbale    (temp_valid),
-    .cycle_valid    ()
+    .adc_clk            (clkA_65m),
+    .sys_clk            (clk_130m),
+    .rst                (rst_n),
+    .sync_data          (sync_porta_data),
+    .fifo_data          (fifo_data_porta),
+    .fifo_enbale        (temp_valid),
+    .fifo_data_last_d1  (fifo_adc_porta_last),
+    .cycle_valid        (fifo_adc_porta_sync)
     );
 
 adc_fifo_ctrl u2(
-    .adc_clk        (clkB_65m),
-    .sys_clk        (clk_130m),
-    .rst            (rst_n),
-    .sync_data     (sync_portb_data),
-    .fifo_data      (fifo_data_portb),
-    .fifo_enbale    (temp_valid),
-    .cycle_valid    ()
+    .adc_clk            (clkB_65m),
+    .sys_clk            (clk_130m),
+    .rst                (rst_n),
+    .sync_data          (sync_portb_data),
+    .fifo_data          (fifo_data_portb),
+    .fifo_enbale        (temp_valid),
+    .fifo_data_last_d1  (fifo_adc_portb_last),
+    .cycle_valid        (fifo_adc_portb_sync)
     );
+// instance fft module
+// fft_ctrl u1_fft_ctrl (
+//     .aclk(clk_130m),                             //sample clock，130m时钟               
+//     .aresetn(rst_n),                             //复位信号，低电平有效  
+//     .s_axis_config_tdata(8'b1),      //配置通道的输入数据，1：fft   0：ifft
+//     .s_axis_config_tvalid(1'b1),    //配置通道的输入数据有效使能
+//     .s_axis_config_tready(),    //外部模块准备接收配置通道数据
 
+//     .s_axis_data_tdata(fifo_data_portb),            //输入数据
+//     .s_axis_data_tvalid(fifo_adc_portb_sync),            //输入数据有效使能
+//     .s_axis_data_tready(),            //外部模块准备接收输入数据
+//     .s_axis_data_tlast(fifo_adc_portb_last),              //输入数据的最后一个数据
+
+//     .m_axis_data_tdata(m_axis_data_tdata),              //输出数据
+//     .m_axis_data_tuser(m_axis_data_tuser),              //输出数据的user信号
+//     .m_axis_data_tvalid(m_axis_data_tvalid),            //输出数据有效使能
+//     .m_axis_data_tready(1'b1),            //外部模块准备接收输出数据
+//     .m_axis_data_tlast(m_axis_data_tlast)              //输出数据的最后一个数据
+
+//     // .m_axis_status_tdata(),
+//     // .m_axis_status_tvalid(),
+//     // .m_axis_status_tready(1'b1),
+//     // .event_frame_started(),
+//     // .event_tlast_unexpected(),
+//     // .event_tlast_missing(),
+//     // .event_status_channel_halt(),
+//     // .event_data_in_channel_halt(),
+//     // .event_data_out_channel_halt()
+// );
 // compile
 //assign  BUS_DATA_RD = ad_porta_data;
 
 //test creat enable signal
-reg [15:0] temp_cnt ;
+
 
 always @(posedge clk_130m or negedge rst_n) begin
     if (!rst_n) begin

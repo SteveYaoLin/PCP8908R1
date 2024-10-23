@@ -31,6 +31,7 @@ module adc_fifo_ctrl#(
     input [13:0] sync_data,
     output [13:0] fifo_data,
     input fifo_enbale,
+    output reg fifo_data_last_d1,
     output cycle_valid
     );
 
@@ -101,10 +102,10 @@ always @(posedge adc_clk or negedge rst) begin
     if(rst == 1'b0) begin
         fifo_wr_cnt <= 15'd0;
     end
-    else if (fifo_enbale_d0 && ~fifo_enbale_d1) begin
+    else if (fifo_enbale_d0 & ~fifo_enbale_d1) begin
         fifo_wr_cnt <= fifo_wr_cnt + 1'b1;
     end
-    else if((|fifo_wr_cnt) &(fifo_wr_cnt < _FIFO_DEPTH))begin
+    else if((|fifo_wr_cnt) & (fifo_wr_cnt < _FIFO_DEPTH))begin
         fifo_wr_cnt <= fifo_wr_cnt + 1'b1;
     end
     else  begin 
@@ -124,7 +125,7 @@ always @(posedge sys_clk or negedge rst) begin
     else if (rd_begin) begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
     end
-    else if ((|fifo_rd_cnt) &(fifo_rd_cnt < _FIFO_DEPTH))begin
+    else if ((|fifo_rd_cnt) & (fifo_rd_cnt < _FIFO_DEPTH))begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
     end
     else  begin 
@@ -135,5 +136,17 @@ end
 assign rd_en = (|fifo_rd_cnt) ? 1'b1 : 1'b0; //rd_en is H during 1-_FIFO_DEPTH
 
 assign cycle_valid = valid;
+//create last data for fft
+always @(posedge sys_clk or negedge rst) begin
+    if (rst == 1'b0) begin
+        fifo_data_last_d1 <= 1'b0;
+    end
+    else if (fifo_rd_cnt == _FIFO_DEPTH) begin
+        fifo_data_last_d1 <= 1'b1;
+    end
+    else begin
+        fifo_data_last_d1 <= 1'b0;
+    end
+end
 
 endmodule
