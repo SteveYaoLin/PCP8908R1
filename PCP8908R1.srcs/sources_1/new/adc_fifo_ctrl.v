@@ -61,7 +61,9 @@ module adc_fifo_ctrl#(
 
     reg [14:0] fifo_wr_cnt;
     reg [14:0] fifo_rd_cnt;
-    wire rd_begin ;
+    wire rd_ready ;
+    reg rd_ready_d1 ;
+    reg rd_begin ;
 
 
 
@@ -116,8 +118,21 @@ end
 assign wr_en = (|fifo_wr_cnt)? 1'b1 : 1'b0; //wr_en is H during 1-_FIFO_DEPTH
 
 //create rd and counter signal
-assign rd_begin = (fifo_wr_cnt == 15'h2cc0) ? 1'b1 : 1'b0;
+assign rd_ready = (fifo_wr_cnt == 15'h2cc0) ? 1'b1 : 1'b0;
 // assign rd_begin = (fifo_wr_cnt == 15'h00d7) ? 1'b1 : 1'b0;
+
+//rd_ready  clock sync
+always @(posedge sys_clk or negedge rst) begin
+if (rst == 1'b0) begin
+    rd_begin <= 1'b0;
+    rd_ready_d1 <= 1'b0;
+end
+else begin
+    rd_begin <= rd_ready_d1;
+    rd_ready_d1 <= rd_ready;
+end
+end
+
 always @(posedge sys_clk or negedge rst) begin
     if(rst == 1'b0) begin
         fifo_rd_cnt <= 15'd0;
