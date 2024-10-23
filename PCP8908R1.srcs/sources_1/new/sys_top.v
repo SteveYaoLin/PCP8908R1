@@ -58,10 +58,10 @@ module sys_top(
     wire fifo_adc_porta_last;
     wire fifo_adc_portb_last;
 
-    wire [31:0]m_axis_data_tdata;
-    wire [23:0]m_axis_data_tuser;
-    wire m_axis_data_tvalid;
-    wire m_axis_data_tlast;
+    wire [31:0]m_axis_data_tdata_porta;
+    wire [23:0]m_axis_data_tuser_porta;
+    wire m_axis_data_tvalid_porta;
+    wire m_axis_data_tlast_porta;
 
     //assign BUS_BE = 4'b1111;
 
@@ -113,7 +113,7 @@ BUS u_bus(
     .io_data_i(BUS_DATA_WR),
     .io_data_o(BUS_DATA_RD),
     // .module_status(module_status),
-    .module_status(m_axis_data_tdata),
+    .module_status(m_axis_data_tdata_porta),
     .module_control(module_control)
 );
 
@@ -169,16 +169,16 @@ adc_fifo_ctrl u2(
 //     .s_axis_config_tvalid(1'b1),    //配置通道的输入数据有效使能
 //     .s_axis_config_tready(),    //外部模块准备接收配置通道数据
 
-//     .s_axis_data_tdata(fifo_data_portb),            //输入数据
-//     .s_axis_data_tvalid(fifo_adc_portb_sync),            //输入数据有效使能
+//     .s_axis_data_tdata(fifo_data_porta),            //输入数据
+//     .s_axis_data_tvalid(fifo_adc_porta_sync),            //输入数据有效使能
 //     .s_axis_data_tready(),            //外部模块准备接收输入数据
-//     .s_axis_data_tlast(fifo_adc_portb_last),              //输入数据的最后一个数据
+//     .s_axis_data_tlast(fifo_adc_porta_last),              //输入数据的最后一个数据
 
-//     .m_axis_data_tdata(m_axis_data_tdata),              //输出数据
-//     .m_axis_data_tuser(m_axis_data_tuser),              //输出数据的user信号
-//     .m_axis_data_tvalid(m_axis_data_tvalid),            //输出数据有效使能
+//     .m_axis_data_tdata(m_axis_data_tdata_porta),              //输出数据
+//     .m_axis_data_tuser(m_axis_data_tuser_porta),              //输出数据的user信号
+//     .m_axis_data_tvalid(m_axis_data_tvalid_porta),            //输出数据有效使能
 //     .m_axis_data_tready(1'b1),            //外部模块准备接收输出数据
-//     .m_axis_data_tlast(m_axis_data_tlast)              //输出数据的最后一个数据
+//     .m_axis_data_tlast(m_axis_data_tlast_porta)              //输出数据的最后一个数据
 
 //     // .m_axis_status_tdata(),
 //     // .m_axis_status_tvalid(),
