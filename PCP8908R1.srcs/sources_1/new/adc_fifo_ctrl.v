@@ -28,8 +28,8 @@ module adc_fifo_ctrl#(
     input adc_clk,
     input sys_clk,
     input rst,
-    input [13:0] sync_data,
-    output [13:0] fifo_data,
+    input [_DATA_WIDTH - 1:0] sync_data,
+    output [_DATA_WIDTH - 1:0] fifo_data,
     input fifo_enbale,
     input fifo_rd_ready,
     output reg fifo_data_last_d1,
@@ -144,8 +144,11 @@ always @(posedge sys_clk or negedge rst) begin
     else if (rd_begin) begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
     end
-    else if ((|fifo_rd_cnt) & (fifo_rd_cnt < _FIFO_DEPTH) & (rd_ready_d1))begin
+    else if ((|fifo_rd_cnt) & (fifo_rd_cnt < _FIFO_DEPTH) & (fifo_rd_ready_d1))begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
+    end
+    else if (~fifo_rd_ready_d1) begin
+        fifo_rd_cnt <= fifo_rd_cnt ;
     end
     else  begin 
         fifo_rd_cnt <= 15'd0;

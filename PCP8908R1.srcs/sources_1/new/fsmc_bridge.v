@@ -1,26 +1,4 @@
-/* 
- * --------------------
- * Project Name			: gkds_sys 
- * Module Name				: fsmc_driver 
- * Description				: The codes of "fsmc_driver"
- * --------------------
- * Tool Versions			: Quartus II 13.1
- * Target Device			: Cyclone IV E  EP4CE10F17C8
- * --------------------
- * Engineer					: weicguodong
- * Revision					: V0.0
- * Created Date			: 2019-11-28
- * --------------------
- * Engineer					:
- * Revision					:
- * Modified Date			:
- * --------------------
- * Additional Comments	: 
- * 
- * --------------------
- */
- /****************************************************************/
- //timescale
+
 `timescale 1 ns / 1 ps
 
 /****************************************************************/
@@ -28,7 +6,7 @@ module fsmc_bridge(
 	input sys_clk,
 	input rst_n,
 	
-	//fsmc×ÜÏßÏà¹ØÐÅºÅ
+	//fsmcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
 
 	input fsmc_nadv,
 	input fsmc_wr,
@@ -36,7 +14,7 @@ module fsmc_bridge(
 	input fsmc_cs,
 	inout [15:0]fsmc_db ,
 
-	//Íâ²¿½Ó¿Ú
+	//ï¿½â²¿ï¿½Ó¿ï¿½
 	// output  [0:0]  BUS_CLK,
  	output  [31:0] BUS_ADDR,
  	// output  [3:0]  BUS_BE,
@@ -45,12 +23,12 @@ module fsmc_bridge(
 ); 
 
 /****************************************************************/
-//wrºÍrdÐÅºÅÌáÈ¡
+//wrï¿½ï¿½rdï¿½Åºï¿½ï¿½ï¿½È¡
 wire rdn = fsmc_cs | fsmc_rd;
 wire wrn = fsmc_cs | fsmc_wr;
 
 /****************************************************************/
-//½ÓÊÕµØÖ·
+//ï¿½ï¿½ï¿½Õµï¿½Ö·
 reg [15:0]address_reg;
 always@(posedge fsmc_nadv or negedge rst_n)
 	begin
@@ -64,7 +42,7 @@ always@(posedge fsmc_nadv or negedge rst_n)
 			end
 	end
 
-//½ÓÊÕÊý¾Ý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 reg [15:0]ad_parameter;
 always@(posedge wrn or negedge rst_n)
 	begin

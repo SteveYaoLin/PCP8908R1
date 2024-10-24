@@ -23,7 +23,11 @@
 `define   SYS_CLOCK checkdata_tb.uut.clk_130m
 `define   ADCA_CLK `ADCA.adc_clk
 `define   ADCB_CLK `ADCB.adc_clk
+`define  ADCB_FIFO_RDCNT `ADCB.fifo_rd_cnt
+`define  ADCA_FIFO_RDCNT `ADCA.fifo_rd_cnt
 
+`define  ADCB_FIFO_RDRDY `ADCB.fifo_rd_ready
+`define  ADCA_FIFO_RDRDY `ADCA.fifo_rd_ready
 
 `define  ADCA_FIFO_BEGIN        `ADCA.fifo_enbale
 `define  ADCB_FIFO_BEGIN        `ADCB.fifo_enbale
@@ -33,6 +37,9 @@
 parameter _FIFO_DEPTH = 16384;
 parameter _FRE_SAMPLE = 65;
 parameter _FREVIN = 13.56;
+parameter _COUNTER_WIDTH = 14;
+parameter _DATA_WIDTH = 14;
+
 module checkdata_tb;
 
 
@@ -62,7 +69,11 @@ module checkdata_tb;
   wire mcu_int;
 
   // Instantiate the sys_top module
-  sys_top uut (
+  sys_top  # (
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._FIFO_DEPTH(_FIFO_DEPTH)
+  ) uut (
     .sys_clk(sys_clk),
     .sys_rst_n(sys_rst_n),
     .ad_porta_data(ad_porta_data),
@@ -101,7 +112,7 @@ module checkdata_tb;
     else if (`ADCB_FIFO_BEGIN == 1'b1) begin
       ad_portb_data = ad_portb_data + 1;  // Random 14-bit data for porta
     end
-    else if  ((|ad_portb_data)&(ad_portb_data < (16385)))begin
+    else if  ((|ad_portb_data)&(ad_portb_data < (_FIFO_DEPTH + 100)))begin
       // ad_ofa = ~ad_ofa;  // Toggle enable signal
       ad_portb_data <= ad_portb_data + 1;
     end
@@ -117,18 +128,26 @@ module checkdata_tb;
       //   $display("Time is %0t,FIFO READ DATA is %0d",$realtime,`ADCB_FIFO_READ_DATA);
       //   end
       // end
+      always@(posedge `SYS_CLOCK ) begin 
+        if ((`ADCA_FIFO_RDCNT == 99)|(`ADCA_FIFO_RDCNT == 100)) begin
+          force `ADCA_FIFO_RDRDY = 1'b1 ;
+        end
+        else begin
+          release  `ADCA_FIFO_RDRDY ;
+        end
+      end
 // Generate sine wave signal based on 65M clock (13 clock cycles per period)
   real sine_wave_real;
   integer i;
   reg [13:0] sine_wave;
-  real amplitude = 14'h1FFF;  // 幅值
+  real amplitude = 14'h1FFF;  // 幅�??
 
   initial begin
     for (i = 0; i < _FIFO_DEPTH ; i = i + 1) begin  // Generate 10 sine wave cycles for demonstration
       @(posedge ad_porta_clk);
-      sine_wave_real = 14'h2000 + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN));  // 正弦波生成公式
-      sine_wave = sine_wave_real;  // 将实数转换为14位信号
-      ad_porta_data = sine_wave;  // 将正弦波信号传递给ad_porta_data
+      sine_wave_real = 14'h2000 + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN));  // 正弦波生成公�?
+      sine_wave = sine_wave_real;  // 将实数转换为14位信�?
+      ad_porta_data = sine_wave;  // 将正弦波信号传�?�给ad_porta_data
         if (i == (_FIFO_DEPTH - 1)) begin
             i=0;
             once = 1;
