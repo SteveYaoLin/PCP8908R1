@@ -67,8 +67,8 @@ module sys_top # (
     wire [23:0]m_axis_data_tuser_porta;
     wire m_axis_data_tvalid_porta;
     wire m_axis_data_tlast_porta;
-    wire m_axis_data_tready_porta;
-    wire m_axis_data_tready_portb;
+    wire s_axis_data_tready_porta;
+    wire s_axis_data_tready_portb;
 
     //assign BUS_BE = 4'b1111;
 
@@ -158,7 +158,7 @@ adc_fifo_ctrl  # (
     .sync_data          (sync_porta_data),
     .fifo_data          (fifo_data_porta),
     .fifo_enbale        (temp_valid),
-    .fifo_rd_ready      (m_axis_data_tready_porta),
+    .fifo_rd_ready      (s_axis_data_tready_porta),
     .fifo_data_last_d1  (fifo_adc_porta_last),
     .cycle_valid        (fifo_adc_porta_sync)
     );
@@ -175,7 +175,7 @@ adc_fifo_ctrl  # (
     .sync_data          (sync_portb_data),
     .fifo_data          (fifo_data_portb),
     .fifo_enbale        (temp_valid),
-    .fifo_rd_ready      (m_axis_data_tready_portb),
+    .fifo_rd_ready      (s_axis_data_tready_portb),
     .fifo_data_last_d1  (fifo_adc_portb_last),
     .cycle_valid        (fifo_adc_portb_sync)
     );
@@ -210,8 +210,8 @@ adc_fifo_ctrl  # (
 //  );
 // compile
 //assign  BUS_DATA_RD = ad_porta_data;
-assign m_axis_data_tready_porta = 1'b1;
-assign m_axis_data_tready_portb = 1'b1;
+assign s_axis_data_tready_porta = 1'b1;
+assign s_axis_data_tready_portb = 1'b1;
 //test creat enable signal
 
 

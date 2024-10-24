@@ -68,6 +68,8 @@ module checkdata_tb;
   wire fmc_int;
   wire mcu_int;
 
+  reg [1:0] temp_cnt ;
+
   // Instantiate the sys_top module
   sys_top  # (
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
@@ -129,11 +131,17 @@ module checkdata_tb;
       //   end
       // end
       always@(posedge `SYS_CLOCK ) begin 
-        if ((`ADCA_FIFO_RDCNT == 99)|(`ADCA_FIFO_RDCNT == 100)) begin
-          force `ADCA_FIFO_RDRDY = 1'b1 ;
+        if (`ADCB_FIFO_RDCNT == 99)begin
+          force `ADCB_FIFO_RDRDY = 1'b0 ;
+          temp_cnt <= 2'b11;
+        end
+        else if (|temp_cnt) begin
+          temp_cnt <= temp_cnt - 1'b1 ;
+          force `ADCB_FIFO_RDRDY = 1'b0 ;
         end
         else begin
-          release  `ADCA_FIFO_RDRDY ;
+          release  `ADCB_FIFO_RDRDY ;
+          // force `ADCB_FIFO_RDRDY = 1'b1 ;
         end
       end
 // Generate sine wave signal based on 65M clock (13 clock cycles per period)
@@ -162,7 +170,7 @@ module checkdata_tb;
     initial begin
     sys_clk = 0;
     clk_50m = 0;
-
+    temp_cnt = 0;
     sys_rst_n = 1;
     ad_porta_data = 0;
     ad_portb_data = 0;
