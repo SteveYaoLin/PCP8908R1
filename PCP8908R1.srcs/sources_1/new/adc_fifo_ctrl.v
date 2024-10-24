@@ -31,6 +31,7 @@ module adc_fifo_ctrl#(
     input [13:0] sync_data,
     output [13:0] fifo_data,
     input fifo_enbale,
+    input fifo_rd_ready,
     output reg fifo_data_last_d1,
     output cycle_valid
     );
@@ -64,6 +65,7 @@ module adc_fifo_ctrl#(
     wire rd_ready ;
     reg rd_ready_d1 ;
     reg rd_begin ;
+    reg fifo_rd_ready_d1 ;
 
 
 
@@ -73,7 +75,7 @@ fifo_generator_0 u_fifo_generator_0 (
   /*input  */.rd_clk(sys_clk),                       
   /*input  */.din(sync_data),                       
   /*input  */.wr_en(wr_en),                          
-  /*input  */.rd_en(rd_en),                          
+  /*input  */.rd_en(rd_en&&fifo_rd_ready),                          
   /*output */.dout(fifo_data),                       
   /*output */.full(full),                            
   /*output */.almost_full(almost_full),              
@@ -94,10 +96,12 @@ always @(posedge adc_clk or negedge rst) begin
     if(rst == 1'b0) begin
         fifo_enbale_d0 <= 1'b0;
         fifo_enbale_d1 <= 1'b0;
+        fifo_rd_ready_d1 <= 1'b0;
     end
     else begin
         fifo_enbale_d0 <= fifo_enbale;
         fifo_enbale_d1 <= fifo_enbale_d0;
+        fifo_rd_ready_d1 <= fifo_rd_ready;
     end
 end
 always @(posedge adc_clk or negedge rst) begin
@@ -140,7 +144,7 @@ always @(posedge sys_clk or negedge rst) begin
     else if (rd_begin) begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
     end
-    else if ((|fifo_rd_cnt) & (fifo_rd_cnt < _FIFO_DEPTH))begin
+    else if ((|fifo_rd_cnt) & (fifo_rd_cnt < _FIFO_DEPTH) & (rd_ready_d1))begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
     end
     else  begin 

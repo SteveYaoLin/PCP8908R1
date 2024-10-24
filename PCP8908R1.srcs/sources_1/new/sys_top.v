@@ -62,6 +62,7 @@ module sys_top(
     wire [23:0]m_axis_data_tuser_porta;
     wire m_axis_data_tvalid_porta;
     wire m_axis_data_tlast_porta;
+    wire    m_axis_data_tready_porta;
 
     //assign BUS_BE = 4'b1111;
 
@@ -158,6 +159,7 @@ adc_fifo_ctrl u2(
     .sync_data          (sync_portb_data),
     .fifo_data          (fifo_data_portb),
     .fifo_enbale        (temp_valid),
+    .fifo_rd_ready      (m_axis_data_tready_porta),
     .fifo_data_last_d1  (fifo_adc_portb_last),
     .cycle_valid        (fifo_adc_portb_sync)
     );
@@ -171,7 +173,7 @@ adc_fifo_ctrl u2(
 
      .s_axis_data_tdata({18'h0,fifo_data_porta}),            //输入数据
      .s_axis_data_tvalid(fifo_adc_porta_sync),            //输入数据有效使能
-     .s_axis_data_tready(),            //外部模块准备接收输入数据
+     .s_axis_data_tready(s_axis_data_tready_porta),            //外部模块准备接收输入数据
      .s_axis_data_tlast(fifo_adc_porta_last),              //输入数据的最后一个数据
 
      .m_axis_data_tdata(m_axis_data_tdata_porta),              //输出数据
@@ -201,9 +203,9 @@ always @(posedge clk_130m or negedge rst_n) begin
         temp_cnt <= 16'd0;
         temp_valid <= 1'b0;
     end
-    else if (temp_cnt == 16'd10000) begin
+    else if (temp_cnt == 16'hffff) begin
         temp_cnt <= temp_cnt;
-        // temp_valid <= 1'b1;
+         temp_valid <= 1'b1;
     end
     else begin
         temp_cnt <= temp_cnt + 1'b1;
