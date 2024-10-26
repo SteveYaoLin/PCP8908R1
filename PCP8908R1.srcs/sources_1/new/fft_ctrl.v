@@ -34,7 +34,7 @@ module fft_ctrl(
 
 xfft_0 xfft_0 (
     .aclk(aclk),                             //sample clock�?130m时钟               
-    .aresetn(rst_n),                             //复位信号，低电平有效  
+    .aresetn(aresetn),                             //复位信号，低电平有效  
     .s_axis_config_tdata(s_axis_config_tdata),      //配置通道的输入数据，1：fft   0：ifft
     .s_axis_config_tvalid(s_axis_config_tvalid),    //配置通道的输入数据有效使�?
     .s_axis_config_tready(s_axis_config_tready),    //外部模块准备接收配置通道数据
