@@ -196,17 +196,17 @@ adc_fifo_ctrl  # (
      .m_axis_data_tuser(m_axis_data_tuser_porta),              //输出数据的user信号
      .m_axis_data_tvalid(m_axis_data_tvalid_porta),            //输出数据有效使能
      .m_axis_data_tready(1'b1),            //外部模块准备接收输出数据
-     .m_axis_data_tlast(m_axis_data_tlast_porta)              //输出数据的最后一个数据
+     .m_axis_data_tlast(m_axis_data_tlast_porta) ,             //输出数据的最后一个数据
 
-     // .m_axis_status_tdata(),
-     // .m_axis_status_tvalid(),
-     // .m_axis_status_tready(1'b1),
-     // .event_frame_started(),
-     // .event_tlast_unexpected(),
-     // .event_tlast_missing(),
-     // .event_status_channel_halt(),
-     // .event_data_in_channel_halt(),
-     // .event_data_out_channel_halt()
+     .m_axis_status_tdata(),
+     .m_axis_status_tvalid(),
+     .m_axis_status_tready(1'b1),
+     .event_frame_started(),
+     .event_tlast_unexpected(),
+     .event_tlast_missing(),
+     .event_status_channel_halt(),
+     .event_data_in_channel_halt(),
+     .event_data_out_channel_halt()
  );
 
  fft_ctrl u1_fft_ctrl (
@@ -225,17 +225,17 @@ adc_fifo_ctrl  # (
      .m_axis_data_tuser(m_axis_data_tuser_portb),              //输出数据的user信号
      .m_axis_data_tvalid(m_axis_data_tvalid_portb),            //输出数据有效使能
      .m_axis_data_tready(1'b1),            //外部模块准备接收输出数据
-     .m_axis_data_tlast(m_axis_data_tlast_portb)              //输出数据的最后一个数据
+     .m_axis_data_tlast(m_axis_data_tlast_portb)  ,            //输出数据的最后一个数据
 
-     // .m_axis_status_tdata(),
-     // .m_axis_status_tvalid(),
-     // .m_axis_status_tready(1'b1),
-     // .event_frame_started(),
-     // .event_tlast_unexpected(),
-     // .event_tlast_missing(),
-     // .event_status_channel_halt(),
-     // .event_data_in_channel_halt(),
-     // .event_data_out_channel_halt()
+     .m_axis_status_tdata(),
+     .m_axis_status_tvalid(),
+     .m_axis_status_tready(1'b1),
+     .event_frame_started(),
+     .event_tlast_unexpected(),
+     .event_tlast_missing(),
+     .event_status_channel_halt(),
+     .event_data_in_channel_halt(),
+     .event_data_out_channel_halt()
  );
 
 // compile
