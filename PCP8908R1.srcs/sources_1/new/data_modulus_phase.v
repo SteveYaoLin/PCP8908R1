@@ -3,24 +3,24 @@ module data_modulus_phase # (_DATA_WIDTH = 14)
     input             clk,
     input             rst_n,
     input             aclken,
-    // FFT ST½Ó¿Ú
-    input   [_DATA_WIDTH:0]     source_real,   // Êµ²¿ ÓÐ·ûºÅÊý
-    input   [_DATA_WIDTH:0]     source_imag,   // Ðé²¿ ÓÐ·ûºÅÊý
-    input             source_eop,    // FFTÊý¾ÝÍ¨µÀ½ÓÊÕ×îºóÒ»¸öÊý¾Ý±êÖ¾ÐÅºÅ
-    input             source_valid,  // Êä³öÓÐÐ§ÐÅºÅ£¬FFT±ä»»Íê³Éºó£¬´ËÐÅºÅÖÃ¸ß£¬¿ªÊ¼Êä³öÊý¾Ý
-    // È¡Ä£ÔËËãºóµÄÊý¾Ý½Ó¿Ú
-    output  [15:0]    data_modulus,  // È¡Ä£ºóµÄÊý¾Ý
-    output            data_eop,      // È¡Ä£ºóÊä³öµÄÖÕÖ¹ÐÅºÅ
-    output            data_valid,    // È¡Ä£ºóµÄÊý¾ÝÓÐÐ§ÐÅºÅ
-    // È¡ÏàÎ»ÔËËãºóµÄÊý¾Ý½Ó¿Ú
-    output  [15:0]    data_phase,    // È¡ÏàÎ»ºóµÄÊý¾Ý
-    output            phase_valid    // È¡ÏàÎ»ºóµÄÊý¾ÝÓÐÐ§ÐÅºÅ
+    // FFT STï¿½Ó¿ï¿½
+    input   [_DATA_WIDTH:0]     source_real,   // Êµï¿½ï¿½ ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½
+    input   [_DATA_WIDTH:0]     source_imag,   // ï¿½é²¿ ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½
+    input             source_eop,    // FFTï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý±ï¿½Ö¾ï¿½Åºï¿½
+    input             source_valid,  // ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ÅºÅ£ï¿½FFTï¿½ä»»ï¿½ï¿½Éºó£¬´ï¿½ï¿½Åºï¿½ï¿½Ã¸ß£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // È¡Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½Ó¿ï¿½
+    output  [15:0]    data_modulus,  // È¡Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    output            data_eop,      // È¡Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½Åºï¿½
+    output            data_valid,    // È¡Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Åºï¿½
+    // È¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½Ó¿ï¿½
+    output  [15:0]    data_phase,    // È¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    output            phase_valid    // È¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Åºï¿½
 );
 
 // reg define
-reg  [2*_DATA_WIDTH - 1 :0]    source_data;         // Ô­ÂëÆ½·½ºÍ
-reg  [_DATA_WIDTH - 1 :0]     data_real;           // Êµ²¿Ô­Âë
-reg  [_DATA_WIDTH - 1 :0]     data_imag;           // Ðé²¿Ô­Âë
+reg  [2*_DATA_WIDTH - 1 :0]    source_data;         // Ô­ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½
+reg  [_DATA_WIDTH - 1 :0]     data_real;           // Êµï¿½ï¿½Ô­ï¿½ï¿½
+reg  [_DATA_WIDTH - 1 :0]     data_imag;           // ï¿½é²¿Ô­ï¿½ï¿½
 reg  [_DATA_WIDTH - 1 :0]     source_valid_d;
 reg  [_DATA_WIDTH - 1 :0]     source_eop_d;
 
@@ -28,7 +28,7 @@ reg  [_DATA_WIDTH - 1 :0]     source_eop_d;
 
 assign  data_eop = source_eop_d[7];
 
-// È¡Êµ²¿ºÍÐé²¿µÄÆ½·½ºÍ
+// È¡Êµï¿½ï¿½ï¿½ï¿½ï¿½é²¿ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½
 always @ (posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         source_data <= 'd0;
@@ -36,21 +36,21 @@ always @ (posedge clk or negedge rst_n) begin
         data_imag   <= 'd0;
     end
     else begin
-        if(source_real[_DATA_WIDTH] == 1'b0)             // ÓÉ²¹Âë¼ÆËãÔ­Âë
+        if(source_real[_DATA_WIDTH] == 1'b0)             // ï¿½É²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½
             data_real <= source_real[_DATA_WIDTH - 1 :0];
         else
             data_real <= ~source_real[_DATA_WIDTH - 1 :0] + 1'b1;
             
-        if(source_imag[_DATA_WIDTH] == 1'b0)             // ÓÉ²¹Âë¼ÆËãÔ­Âë
+        if(source_imag[_DATA_WIDTH] == 1'b0)             // ï¿½É²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½
             data_imag <= source_imag[_DATA_WIDTH - 1 :0];
         else
             data_imag <= ~source_imag[_DATA_WIDTH - 1 :0] + 1'b1;
 
-        source_data <= (data_real * data_real) + (data_imag * data_imag); // ¼ÆËãÔ­ÂëÆ½·½ºÍ
+        source_data <= (data_real * data_real) + (data_imag * data_imag); // ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½
     end
 end
   
-// ¶ÔÐÅºÅ½øÐÐ´òÅÄÑÓÊ±´¦Àí
+// ï¿½ï¿½ï¿½ÅºÅ½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
 always @ (posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         source_eop_d   <= 8'd0;
@@ -62,21 +62,23 @@ always @ (posedge clk or negedge rst_n) begin
     end
 end
 
-// Àý»¯cordicÄ£¿é£¬½øÐÐ¿ª¸ùºÅÔËËãÒÔÇóÄ£
+// ï¿½ï¿½ï¿½ï¿½cordicÄ£ï¿½é£¬ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£
 cordic_0 u_cordic_0 (
     .aclk(clk),
     .aclken(aclken),
+    .aresetn(rst_n),
     .s_axis_cartesian_tvalid(source_valid_d[1]),
-    .s_axis_cartesian_tdata(source_data),
+    .s_axis_cartesian_tdata({4'h0,source_data}),
     .m_axis_dout_tvalid(data_valid),
     // .m_axis_dout_tlast(),
     .m_axis_dout_tdata(data_modulus)
 );
 
-// Àý»¯µÚ¶þ¸öcordicÄ£¿é£¬½øÐÐarctanÔËËãÒÔÇóÏàÎ»
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½cordicÄ£ï¿½é£¬ï¿½ï¿½ï¿½ï¿½arctanï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»
 cordic_1 u_cordic_1 (
     .aclk(clk),
     .aclken(aclken),
+    .aresetn(rst_n),
     .s_axis_cartesian_tvalid(source_valid_d[1]),
     .s_axis_cartesian_tdata({data_real, data_imag}),
     .m_axis_dout_tvalid(phase_valid),

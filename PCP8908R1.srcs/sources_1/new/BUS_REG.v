@@ -7,7 +7,11 @@ module BUS (
   input  [15:0] io_data_i,
   output [15:0] io_data_o,
 // INPUT DATA
-  input  [15:0]     module_status,
+  input  [15:0]     module_status0,
+  input  [15:0]     module_status1,
+  input  [15:0]     module_status2,
+  input  [15:0]     module_status3,
+  input  [15:0]     module_status4,
   //OUTPUT REG
   output [15:0]     module_control
  
@@ -28,7 +32,11 @@ assign io_data_o = DATA_RD;
   always @(*) begin
     case ({io_addr[15:1],1'd0})
     'h0002 : DATA_RD = module_control;   
-    'h0004 : DATA_RD = module_status;  
+    'h0004 : DATA_RD = module_status0;  
+    'h0006 : DATA_RD = module_status1;
+    'h0008 : DATA_RD = module_status2;
+    'h000a : DATA_RD = module_status3;
+    'h000c : DATA_RD = module_status4;
 
     'h0100 : DATA_RD = test_reg[16*0 +:16];
     'h0104 : DATA_RD = test_reg[16*1 +:16];

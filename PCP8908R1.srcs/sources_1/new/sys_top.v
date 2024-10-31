@@ -68,7 +68,24 @@ module sys_top # (
     wire m_axis_data_tvalid_porta;
     wire m_axis_data_tlast_porta;
     wire s_axis_data_tready_porta;
+
+    wire [31:0]m_axis_data_tdata_portb;
+    wire [23:0]m_axis_data_tuser_portb;
+    wire m_axis_data_tvalid_portb;
+    wire m_axis_data_tlast_portab;
     wire s_axis_data_tready_portb;
+
+    wire  [15:0]    data_modulus_porta  ;  // 取模后的数据
+    wire            data_eop_porta      ;      // 取模后输出的终止信号
+    wire            data_valid_porta    ;    // 取模后的数据有效信号
+    wire  [15:0]    data_phase_porta    ;    // 取相位后的数据
+    wire            phase_valid_porta   ;    // 取相位后的数据有效信号
+
+    wire  [15:0]    data_modulus_portb  ;  // 取模后的数据
+    wire            data_eop_portb      ;      // 取模后输出的终止信号
+    wire            data_valid_portb    ;    // 取模后的数据有效信号
+    wire  [15:0]    data_phase_portb    ;    // 取相位后的数据
+    wire            phase_valid_portb   ;    // 取相位后的数据有效信号
 
     //assign BUS_BE = 4'b1111;
 
@@ -120,7 +137,11 @@ BUS u_bus(
     .io_data_i(BUS_DATA_WR),
     .io_data_o(BUS_DATA_RD),
     // .module_status(module_status),
-    .module_status(m_axis_data_tdata_porta),
+    .module_status0(16'h5a5a),
+    .module_status1(data_modulus_porta),
+    .module_status2(data_phase_porta),
+    .module_status3(data_modulus_portb),
+    .module_status4(data_phase_portb),
     .module_control(module_control)
 );
 
@@ -206,7 +227,13 @@ adc_fifo_ctrl  # (
      .event_tlast_missing(),
      .event_status_channel_halt(),
      .event_data_in_channel_halt(),
-     .event_data_out_channel_halt()
+     .event_data_out_channel_halt(),
+     .data_modulus(data_modulus_porta),
+     .data_eop(data_eop_porta),
+     .data_valid(data_valid_porta),
+     .data_phase(data_phase_porta),
+     .phase_valid(phase_valid_porta)
+
  );
 
  fft_ctrl u1_fft_ctrl (
@@ -235,7 +262,12 @@ adc_fifo_ctrl  # (
      .event_tlast_missing(),
      .event_status_channel_halt(),
      .event_data_in_channel_halt(),
-     .event_data_out_channel_halt()
+     .event_data_out_channel_halt(),
+     .data_modulus(data_modulus_portb),
+     .data_eop(data_eop_portb),
+     .data_valid(data_valid_portb),
+     .data_phase(data_phase_portb),
+     .phase_valid(phase_valid_portb)
  );
 
 // compile

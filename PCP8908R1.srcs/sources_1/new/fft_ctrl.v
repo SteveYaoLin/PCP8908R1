@@ -1,4 +1,5 @@
-module fft_ctrl(
+module fft_ctrl # (_DATA_WIDTH = 14)
+(
     input aclk, 
     input aresetn,
     input [7:0]s_axis_config_tdata,
@@ -21,7 +22,15 @@ module fft_ctrl(
     output event_tlast_missing,
     output event_status_channel_halt,
     output event_data_in_channel_halt,
-    output event_data_out_channel_halt
+    output event_data_out_channel_halt,
+    // 取模运算后的数据接口
+    output  [15:0]    data_modulus,  // 取模后的数据
+    output            data_eop,      // 取模后输出的终止信号
+    output            data_valid,    // 取模后的数据有效信号
+    // 取相位运算后的数据接�?
+    output  [15:0]    data_phase,    // 取相位后的数�?
+    output            phase_valid    // 取相位后的数据有效信�?
+
 );
     wire [7:0]m_axis_status_tdata;
     wire m_axis_status_tvalid;
@@ -32,23 +41,29 @@ module fft_ctrl(
     wire event_data_in_channel_halt;
     wire event_data_out_channel_halt;
 
-xfft_0 xfft_0 (
-    .aclk(aclk),                             //sample clock�?130m时钟               
+    wire  [15:0]    data_modulus;  // 取模后的数据
+    wire            data_eop;      // 取模后输出的终止信号
+    wire            data_valid;    // 取模后的数据有效信号
+    wire  [15:0]    data_phase;    // 取相位后的数�?
+    wire            phase_valid;   // 取相位后的数据有效信�?
+
+xfft_0 u_xfft_0 (
+    .aclk(aclk),                             //sample clock�??130m时钟               
     .aresetn(aresetn),                             //复位信号，低电平有效  
     .s_axis_config_tdata(s_axis_config_tdata),      //配置通道的输入数据，1：fft   0：ifft
-    .s_axis_config_tvalid(s_axis_config_tvalid),    //配置通道的输入数据有效使�?
+    .s_axis_config_tvalid(s_axis_config_tvalid),    //配置通道的输入数据有效使�??
     .s_axis_config_tready(s_axis_config_tready),    //外部模块准备接收配置通道数据
 
     .s_axis_data_tdata(s_axis_data_tdata),            //输入数据
     .s_axis_data_tvalid(s_axis_data_tvalid),            //输入数据有效使能
     .s_axis_data_tready(s_axis_data_tready),            //外部模块准备接收输入数据
-    .s_axis_data_tlast(s_axis_data_tlast),              //输入数据的最后一个数�?
+    .s_axis_data_tlast(s_axis_data_tlast),              //输入数据的最后一个数�??
 
     .m_axis_data_tdata(m_axis_data_tdata),              //输出数据
     .m_axis_data_tuser(m_axis_data_tuser),              //输出数据的user信号
     .m_axis_data_tvalid(m_axis_data_tvalid),            //输出数据有效使能
     .m_axis_data_tready(m_axis_data_tready),            //外部模块准备接收输出数据
-    .m_axis_data_tlast(m_axis_data_tlast),              //输出数据的最后一个数�?
+    .m_axis_data_tlast(m_axis_data_tlast),              //输出数据的最后一个数�??
 
     .m_axis_status_tdata(m_axis_status_tdata),
     .m_axis_status_tvalid(m_axis_status_tvalid),
@@ -60,4 +75,22 @@ xfft_0 xfft_0 (
     .event_data_in_channel_halt(event_data_in_channel_halt),
     .event_data_out_channel_halt(event_data_out_channel_halt)
 );
+
+data_modulus_phase # (
+    ._DATA_WIDTH(14)
+) u_data_modulus_phase (
+    .clk(aclk),
+    .rst_n(aresetn),
+    .aclken(1'b1),
+    .source_real(m_axis_data_tdata[0  +: (_DATA_WIDTH + 1)]),
+    .source_imag(m_axis_data_tdata[16 +: (_DATA_WIDTH + 1)]),
+    .source_eop(m_axis_data_tlast),
+    .source_valid(m_axis_data_tvalid),
+    .data_modulus(data_modulus),
+    .data_eop(data_eop),
+    .data_valid(data_valid),
+    .data_phase(data_phase),
+    .phase_valid(phase_valid)
+);
+
 endmodule
