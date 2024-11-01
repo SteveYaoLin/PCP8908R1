@@ -87,6 +87,8 @@ module sys_top # (
     wire  [15:0]    data_phase_portb    ;    // 取相位后的数据
     wire            phase_valid_portb   ;    // 取相位后的数据有效信号
 
+    // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
+
     //assign BUS_BE = 4'b1111;
 
     assign rst_n =  sys_rst_n && locked; 
@@ -201,7 +203,12 @@ adc_fifo_ctrl  # (
     .cycle_valid        (fifo_adc_portb_sync)
     );
 // instance fft module
- fft_ctrl u0_fft_ctrl (
+ fft_ctrl  # (
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._FIFO_DEPTH(_FIFO_DEPTH)
+) u0_fft_ctrl
+ (
      .aclk(clk_130m),                             //sample clock，130m时钟               
      .aresetn(rst_n),                             //复位信号，低电平有效  
      .s_axis_config_tdata(8'b1),      //配置通道的输入数据，1：fft   0：ifft
@@ -236,7 +243,12 @@ adc_fifo_ctrl  # (
 
  );
 
- fft_ctrl u1_fft_ctrl (
+ fft_ctrl  # (
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._FIFO_DEPTH(_FIFO_DEPTH)
+) u1_fft_ctrl
+  (
      .aclk(clk_130m),                             //sample clock，130m时钟               
      .aresetn(rst_n),                             //复位信号，低电平有效  
      .s_axis_config_tdata(8'b1),      //配置通道的输入数据，1：fft   0：ifft
