@@ -7,7 +7,7 @@ module sys_top # (
 (
     input                 sys_clk     	,  //时钟信号
     input                 sys_rst_n   	,  //复位信号
-    // input                 key   		,  //按键信号
+    output                 led   		,  //按键信号
     //STM32H7的FMC接口
     inout     [15:0]       fmc_adda_data     ,  //FMC的ADDA数据
     input     fmc_clk     ,  //FMC的ADDA时钟
@@ -40,14 +40,14 @@ module sys_top # (
     wire        clkB_65m;             //65MHz时钟
     wire        locked;              //PLL锁定信号
     wire        rst_n;               //系统复位信号
-    wire  [31:0] BUS_ADDR;
+    wire  [15:0] BUS_ADDR;
 //   wire  [3:0]  BUS_BE；
     wire  [15:0] BUS_DATA_WR;
     wire  [15:0] BUS_DATA_RD;
-    reg temp_valid;
-    //AD转换模块的接口
-    reg adc_porta_en  = 1'b1;
-    reg adc_portb_en  = 1'b1;
+
+    //
+    reg adc_porta_en  = 1'b0;
+    reg adc_portb_en  = 1'b0;
     reg [15:0] temp_cnt ;
     //
     wire  [_DATA_WIDTH - 1:0]       sync_porta_data    	;  //AD转换模块的数据
@@ -65,6 +65,8 @@ module sys_top # (
 
     wire [31:0]m_axis_data_tdata_porta;
     wire [23:0]m_axis_data_tuser_porta;
+    wire [31:0]m_axis_data_tdata_portb;
+    wire [23:0]m_axis_data_tuser_portb;
     wire m_axis_data_tvalid_porta;
     wire m_axis_data_tlast_porta;
     wire s_axis_data_tready_porta;
@@ -92,8 +94,8 @@ module sys_top # (
     //assign BUS_BE = 4'b1111;
 
     assign rst_n =  sys_rst_n && locked; 
-    assign ad_shdna = module_control[0];
-    assign ad_shdnb = module_control[1];
+    assign ad_shdna =1'b0;// module_control[0];
+    assign ad_shdnb =1'b0;// module_control[1];
     assign fmc_nwait =  1'b1; 
 
     //PLL模块
@@ -113,37 +115,43 @@ module sys_top # (
     );
   
     //instance bus bridge
-fsmc_bridge u_fsmc_bridge(
-	.sys_clk(clk_65m),
-	.rst_n(rst_n),
+// fsmc_bridge u_fsmc_bridge(
+// 	.sys_clk(clk_65m),
+// 	.rst_n(rst_n),
 	
-	//fsmc总线相关信号
-	.fsmc_nadv(fmc_nl),
-	.fsmc_wr(fmc_nwe),
-	.fsmc_rd(fmc_noe),
-	.fsmc_cs(fmc_ncs),
-	.fsmc_db(fmc_adda_data),
+// 	//fsmc总线相关信号
+// 	.fsmc_nadv(fmc_nl),
+// 	.fsmc_wr(fmc_nwe),
+// 	.fsmc_rd(fmc_noe),
+// 	.fsmc_cs(fmc_ncs),
+// 	.fsmc_db(fmc_adda_data),
 
-	//外部接口
-	//.BUS_CLK(BUS_CLK),
-	.BUS_ADDR(BUS_ADDR),
-	//.BUS_BE(BUS_BE),
-	.BUS_DATA_WR(BUS_DATA_WR),
-	.BUS_DATA_RD(BUS_DATA_RD)
-);
+// 	//外部接口
+// 	//.BUS_CLK(BUS_CLK),
+// 	.BUS_ADDR(BUS_ADDR),
+// 	//.BUS_BE(BUS_BE),
+// 	.BUS_DATA_WR(BUS_DATA_WR),
+// 	.BUS_DATA_RD(BUS_DATA_RD)
+// );
 
 BUS u_bus(
     .io_clk(clk_65m),
+    .rst_n(rst_n),
     .io_be(2'b11),
-    .io_addr(BUS_ADDR),
-    .io_data_i(BUS_DATA_WR),
-    .io_data_o(BUS_DATA_RD),
+    .io_wr(fmc_nwe),
+    .io_rd(fmc_noe),
+    .io_nadv(fmc_nl),
+    .io_cs(fmc_ncs),
+    // .io_addr(BUS_ADDR),
+    // .io_data_i(BUS_DATA_WR),
+    // .io_data_o(BUS_DATA_RD),
+    .io_data(fmc_adda_data),
     // .module_status(module_status),
     .module_status0(16'h5a5a),
-    .module_status1(data_modulus_porta),
-    .module_status2(data_phase_porta),
-    .module_status3(data_modulus_portb),
-    .module_status4(data_phase_portb),
+    .module_status1(m_axis_data_tdata_porta[15:0]),
+    .module_status2(m_axis_data_tdata_porta[31:16]),
+    .module_status3(m_axis_data_tdata_portb[15:0]),
+    .module_status4(m_axis_data_tdata_portb[31:16]),
     .module_control(module_control)
 );
 
@@ -169,6 +177,21 @@ adc_data_sync #(
     .adc_data(ad_portb_data),
     .sync_data(sync_portb_data)
 );
+//ila_0 ila_0(
+//.clk	(clkA_65m),
+//.probe0	(io_nadv),
+//.probe1	(io_wr),
+//.probe2	(io_rd),
+//.probe3	(io_cs),
+//.probe4	(module_control),
+//.probe5	(address_reg),
+//.probe6	(ADDR_RD),
+//.probe7	(DATA_RD),
+//.probe8	(addrphase)
+////.probe9	(),
+////.probe10(),
+////.probe11()
+//);
 
 adc_fifo_ctrl  # (
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
@@ -288,19 +311,30 @@ adc_fifo_ctrl  # (
 // assign s_axis_data_tready_portb = 1'b1;
 //test creat enable signal
 
+breath_led u_breath_led(
+    .sys_clk       (clk_65m) ,      //系统时锟斤拷 50MHz
+    .sys_rst_n       (rst_n) ,    //系统锟斤拷位锟斤拷锟酵碉拷平锟斤拷效
+    .led (led )           //LED锟斤拷
+);
 
-always @(posedge clk_130m or negedge rst_n) begin
+// `ifdef SIM
+parameter _CNT = 200; // 娴嬭瘯鏃朵娇鐢ㄨ緝灏忕殑鍊?
+// `else
+// parameter _CNT = 65536; // 榛樿?ゅ�?
+// `endif
+wire temp_valid;
+always @(posedge clk_65m or negedge rst_n) begin
     if (!rst_n) begin
         temp_cnt <= 16'd0;
-        temp_valid <= 1'b0;
     end
-    else if (temp_cnt == 16'hffff) begin
-        temp_cnt <= temp_cnt;
-         temp_valid <= 1'b1;
+    else if (temp_cnt == _CNT) begin
+        temp_cnt <= 16'd0;
     end
     else begin
         temp_cnt <= temp_cnt + 1'b1;
     end
 end
+    assign temp_valid = ((temp_cnt == (_CNT-10))|(temp_cnt == (_CNT-9))) ? 1'b1 : 1'b0;
+
 
 endmodule

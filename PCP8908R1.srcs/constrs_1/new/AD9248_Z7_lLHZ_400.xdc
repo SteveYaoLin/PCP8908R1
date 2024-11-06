@@ -127,3 +127,6 @@ set_property PACKAGE_PIN U12 [get_ports fmc_ncs  ]
 set_property PACKAGE_PIN U13 [get_ports fmc_noe  ]
 set_property PACKAGE_PIN V15 [get_ports fmc_int  ]
 set_property PACKAGE_PIN T11 [get_ports mcu_int  ]
+
+set_property PACKAGE_PIN J16 [get_ports led]
+set_property IOSTANDARD LVCMOS33 [get_ports led]
