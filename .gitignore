@@ -15,6 +15,7 @@ ip_upgrade.log
 
 # !/PCP8908R1.runs/impl_1/sys_top.bit
 !PCP8908R1.runs/impl_1/sys_top.bit
+!PCP8908R1.runs/impl_1/sys_top.ltx
 # !vivado.jou
 # #########################################################################################################
 # ##	This is an example .gitignore file for Vivado, please treat it as an example as 
