@@ -22,6 +22,8 @@
 `define  ADCB   checkdata_tb.uut.u2
 `define   SYS_CLOCK checkdata_tb.uut.clk_130m
 `define   ADCA_CLK `ADCA.adc_clk
+`define BUS_CLOCK checkdata_tb.uut.clk_65m
+`define ADDR checkdata_tb.uut.fsmc_bridge.fsmc_db
 `define   ADCB_CLK `ADCB.adc_clk
 `define  ADCB_FIFO_RDCNT `ADCB.fifo_rd_cnt
 `define  ADCA_FIFO_RDCNT `ADCA.fifo_rd_cnt
@@ -52,6 +54,9 @@ module checkdata_tb;
   reg ad_ofb;
   reg fmc_clk;
   reg fmc_nl;
+  reg fmc_nwe;
+  reg fmc_ncs;
+  reg fmc_noe;
 
   // Inouts
   wire [15:0] fmc_adda_data;
@@ -59,6 +64,8 @@ module checkdata_tb;
   // Outputs
   wire ad_shdna;
   wire ad_shdnb;
+  wire ad_porta_oen;
+  wire ad_portb_oen;
   wire ad_porta_clk;
   wire ad_portb_clk;
   wire fmc_nwait;
@@ -67,6 +74,8 @@ module checkdata_tb;
   wire fmc_noe;
   wire fmc_int;
   wire mcu_int;
+  wire led;
+  reg [15:0] read_data;
 
   reg [1:0] temp_cnt ;
 
@@ -78,12 +87,15 @@ module checkdata_tb;
   ) uut (
     .sys_clk(sys_clk),
     .sys_rst_n(sys_rst_n),
+    .led(led),
     .ad_porta_data(ad_porta_data),
     .ad_portb_data(ad_portb_data),
     .ad_ofa(ad_ofa),
     .ad_ofb(ad_ofb),
     .ad_shdna(ad_shdna),
     .ad_shdnb(ad_shdnb),
+    .ad_porta_oen(ad_porta_oen),
+    .ad_portb_oen(ad_portb_oen),
     .ad_porta_clk(ad_porta_clk),
     .ad_portb_clk(ad_portb_clk),
     .fmc_adda_data(fmc_adda_data),
@@ -130,20 +142,20 @@ module checkdata_tb;
       //   $display("Time is %0t,FIFO READ DATA is %0d",$realtime,`ADCB_FIFO_READ_DATA);
       //   end
       // end
-      always@(posedge `SYS_CLOCK ) begin 
-        if (`ADCB_FIFO_RDCNT == 99)begin
-          force `ADCB_FIFO_RDRDY = 1'b0 ;
-          temp_cnt <= 2'b11;
-        end
-        else if (|temp_cnt) begin
-          temp_cnt <= temp_cnt - 1'b1 ;
-          force `ADCB_FIFO_RDRDY = 1'b0 ;
-        end
-        else begin
-          release  `ADCB_FIFO_RDRDY ;
-          // force `ADCB_FIFO_RDRDY = 1'b1 ;
-        end
-      end
+      // always@(posedge `SYS_CLOCK ) begin 
+      //   if (`ADCB_FIFO_RDCNT == 99)begin
+      //     force `ADCB_FIFO_RDRDY = 1'b0 ;
+      //     temp_cnt <= 2'b11;
+      //   end
+      //   else if (|temp_cnt) begin
+      //     temp_cnt <= temp_cnt - 1'b1 ;
+      //     force `ADCB_FIFO_RDRDY = 1'b0 ;
+      //   end
+      //   else begin
+      //     release  `ADCB_FIFO_RDRDY ;
+      //     // force `ADCB_FIFO_RDRDY = 1'b1 ;
+      //   end
+      // end
 // Generate sine wave signal based on 65M clock (13 clock cycles per period)
   real sine_wave_real;
   integer i;
@@ -166,6 +178,55 @@ module checkdata_tb;
     end
   end
    
+       // Bidirectional data bus
+    reg [15:0] fmc_adda_data_out;
+    // assign fmc_adda_data = ((fmc_nl == 0)|(fmc_nwe == 0)) ? fmc_adda_data_out : 16'hzzzz;
+    assign fmc_adda_data = (fmc_noe) ? fmc_adda_data_out : 16'hzzzz;
+    // FSMC write task
+    task fsmc_write(input [15:0] addr, input [15:0] data);
+        begin
+            // Address phase
+            fmc_ncs = 0;          // Assert chip select
+            fmc_nl = 0;           // Assert address latch enable
+            fmc_adda_data_out = {1'b0,addr[15:1]};   // Place address on data bus
+            #(15.38);                // Address setup time (adjust as needed)
+
+            #(15.38);                // Address setup time (adjust as needed)
+
+            // Data phase
+            fmc_nl = 1;           // Deassert address latch enable
+            fmc_nwe = 0;          // Assert write enable
+            fmc_adda_data_out = data;   // Place data on data bus
+            #(3*15.38);                 // Data setup time (adjust as needed)
+
+            // End of write cycle
+            fmc_nwe = 1;          // Deassert write enable
+            fmc_ncs = 1;          // Deassert chip select
+        end
+    endtask
+
+    // FSMC read task
+    task fsmc_read(input [15:0] addr, output [15:0] data_out);
+        begin
+            // Address phase
+            fmc_ncs = 0;          // Assert chip select
+            fmc_nl = 0;           // Assert address latch enable
+            fmc_adda_data_out =  {1'b0,addr[15:1]};   // Place address on data bus
+            #(15.38);                // Address setup time (adjust as needed)
+            // release `ADDR ;
+            #(15.38);                // Address setup time (adjust as needed)
+
+            // Data phase
+            fmc_nl = 1;           // Deassert address latch enable
+            fmc_noe = 0;          // Assert read enable
+            #(3*15.38);                // Data setup time (adjust as needed)
+            data_out = fmc_adda_data;   // Capture data from data bus
+            #(2*15.38);
+            // End of read cycle
+            fmc_noe = 1;          // Deassert read enable
+            fmc_ncs = 1;          // Deassert chip select
+        end
+    endtask
 
     initial begin
     sys_clk = 0;
@@ -176,7 +237,9 @@ module checkdata_tb;
     ad_portb_data = 0;
     ad_ofa = 0;
     ad_ofb = 0;
-    // fmc_adda_data = 0;
+    fmc_nwe = 1;
+    fmc_ncs = 1;
+    fmc_noe = 1;
     fmc_clk = 0;
     fmc_nl = 1;
     once = 0;

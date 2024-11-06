@@ -31,6 +31,8 @@ module fft_ctrl # (
     output  [15:0]    data_modulus,  // 取模后的数据
     output            data_eop,      // 取模后输出的终�??信号
     output            data_valid,    // 取模后的数据有效信号
+    output [_COUNTER_WIDTH - 1 :0] modulus_cnt,
+    output [_COUNTER_WIDTH - 1 :0] phase_cnt,
     // 取相位运算后的数�?接�?
     output  [15:0]    data_phase,    // 取相位后的数�??
     output            phase_valid    // 取相位后的数�?有效信�?
@@ -109,6 +111,8 @@ data_modulus_phase # (
     .source_valid(m_axis_data_tvalid),
     .data_modulus(data_modulus),
     .data_eop(data_eop),
+    .modulus_cnt(modulus_cnt),
+    .phase_cnt(phase_cnt),
     .data_valid(data_valid),
     .data_phase(data_phase),
     .phase_valid(phase_valid)

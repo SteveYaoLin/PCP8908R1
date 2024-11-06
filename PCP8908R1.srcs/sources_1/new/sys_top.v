@@ -24,11 +24,13 @@ module sys_top # (
    
     input                 ad_ofa      	,  //AD转换模块的使能信号
     output                ad_shdna      	,
+    output                ad_porta_oen      	,
     output                ad_porta_clk      	,  //AD转换模块的时钟
 
     //AD转换模块的接口
     input                 ad_ofb      	,  //AD转换模块的使能信号
     output                ad_shdnb      	,
+    output                ad_portb_oen      	,
     output                ad_portb_clk      	  //AD转换模块的时钟
 
     );
@@ -48,7 +50,7 @@ module sys_top # (
     //
     reg adc_porta_en  = 1'b0;
     reg adc_portb_en  = 1'b0;
-    reg [15:0] temp_cnt ;
+    
     //
     wire  [_DATA_WIDTH - 1:0]       sync_porta_data    	;  //AD转换模块的数据
     wire  [_DATA_WIDTH - 1:0]       sync_portb_data    	;  //AD转换模块的数据
@@ -89,6 +91,11 @@ module sys_top # (
     wire  [15:0]    data_phase_portb    ;    // 取相位后的数据
     wire            phase_valid_portb   ;    // 取相位后的数据有效信号
 
+    wire [_COUNTER_WIDTH - 1 :0] modulus_porta_cnt;
+    wire [_COUNTER_WIDTH - 1 :0] phase_porta_cnt;
+    wire [_COUNTER_WIDTH - 1 :0] modulus_portba_cnt;
+    wire [_COUNTER_WIDTH - 1 :0] phase_portb_cnt;
+
     // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
 
     //assign BUS_BE = 4'b1111;
@@ -96,6 +103,8 @@ module sys_top # (
     assign rst_n =  sys_rst_n && locked; 
     assign ad_shdna =1'b0;// module_control[0];
     assign ad_shdnb =1'b0;// module_control[1];
+    assign ad_porta_oen = 1'b0;
+    assign ad_portb_oen = 1'b0;
     assign fmc_nwait =  1'b1; 
 
     //PLL模块
@@ -148,10 +157,15 @@ BUS u_bus(
     .io_data(fmc_adda_data),
     // .module_status(module_status),
     .module_status0(16'h5a5a),
-    .module_status1(m_axis_data_tdata_porta[15:0]),
-    .module_status2(m_axis_data_tdata_porta[31:16]),
-    .module_status3(m_axis_data_tdata_portb[15:0]),
-    .module_status4(m_axis_data_tdata_portb[31:16]),
+    // .module_status1(m_axis_data_tdata_porta[15:0]   ),
+    // .module_status2(m_axis_data_tdata_porta[31:16]  ),
+    // .module_status3(m_axis_data_tdata_portb[15:0]   ),
+    // .module_status4(m_axis_data_tdata_portb[31:16]  ),
+
+    .module_status1( data_modulus_porta ),
+    .module_status2( data_phase_porta ),
+    .module_status3( data_modulus_portb ),
+    .module_status4( data_phase_portb ),
     .module_control(module_control)
 );
 
@@ -179,16 +193,16 @@ adc_data_sync #(
 );
 //ila_0 ila_0(
 //.clk	(clkA_65m),
-//.probe0	(io_nadv),
-//.probe1	(io_wr),
-//.probe2	(io_rd),
-//.probe3	(io_cs),
-//.probe4	(module_control),
-//.probe5	(address_reg),
-//.probe6	(ADDR_RD),
-//.probe7	(DATA_RD),
-//.probe8	(addrphase)
-////.probe9	(),
+//.probe0	(fifo_data_porta),
+//.probe1	(fifo_data_portb),
+//.probe2	(m_axis_data_tdata_porta[15:0]),
+//.probe3	(m_axis_data_tdata_porta[31:16]),
+//.probe4	(m_axis_data_tuser_porta[13:0]),
+//.probe5	(data_modulus_porta),
+//.probe6	(data_phase_porta),
+//.probe7	(modulus_porta_cnt),
+//.probe8	({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,m_axis_data_tlast_porta,data_eop_porta,phase_valid_porta}),
+//.probe9	(temp_cnt[15:0])
 ////.probe10(),
 ////.probe11()
 //);
@@ -261,6 +275,8 @@ adc_fifo_ctrl  # (
      .data_modulus(data_modulus_porta),
      .data_eop(data_eop_porta),
      .data_valid(data_valid_porta),
+     .modulus_cnt(modulus_porta_cnt),
+     .phase_cnt(phase_porta_cnt),
      .data_phase(data_phase_porta),
      .phase_valid(phase_valid_porta)
 
@@ -301,6 +317,8 @@ adc_fifo_ctrl  # (
      .data_modulus(data_modulus_portb),
      .data_eop(data_eop_portb),
      .data_valid(data_valid_portb),
+     .modulus_cnt(modulus_portb_cnt),
+     .phase_cnt(phase_portb_cnt),
      .data_phase(data_phase_portb),
      .phase_valid(phase_valid_portb)
  );
@@ -318,23 +336,23 @@ breath_led u_breath_led(
 );
 
 // `ifdef SIM
-parameter _CNT = 200; // 娴嬭瘯鏃朵娇鐢ㄨ緝灏忕殑鍊?
+// parameter _CNT = 200; // 测试时使用较小的值
 // `else
-// parameter _CNT = 65536; // 榛樿?ゅ�?
+parameter _CNT = 70000; // 默认值
 // `endif
 wire temp_valid;
+reg [31:0] temp_cnt ;
 always @(posedge clk_65m or negedge rst_n) begin
     if (!rst_n) begin
-        temp_cnt <= 16'd0;
+        temp_cnt <= 32'd0;
     end
     else if (temp_cnt == _CNT) begin
-        temp_cnt <= 16'd0;
+        temp_cnt <= 32'd0;
     end
     else begin
         temp_cnt <= temp_cnt + 1'b1;
     end
 end
-    assign temp_valid = ((temp_cnt == (_CNT-10))|(temp_cnt == (_CNT-9))) ? 1'b1 : 1'b0;
-
+    assign temp_valid = ((temp_cnt == 32'd199)) ? 1'b1 : 1'b0;
 
 endmodule

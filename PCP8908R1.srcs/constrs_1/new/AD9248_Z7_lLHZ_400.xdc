@@ -130,3 +130,8 @@ set_property PACKAGE_PIN T11 [get_ports mcu_int  ]
 
 set_property PACKAGE_PIN J16 [get_ports led]
 set_property IOSTANDARD LVCMOS33 [get_ports led]
+
+set_property PACKAGE_PIN K18 [get_ports ad_porta_oen]
+set_property IOSTANDARD LVCMOS33 [get_ports ad_porta_oen]
+set_property PACKAGE_PIN M15 [get_ports ad_portb_oen]
+set_property IOSTANDARD LVCMOS33 [get_ports ad_portb_oen]
