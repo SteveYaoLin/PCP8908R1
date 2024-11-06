@@ -22,7 +22,7 @@ module BUS (
   wire [1:0]BE = io_be;
   wire [15:0] A = io_addr;
   wire [15:0] D = io_data_i;
-  reg   [31:0] DATA_RD;
+  reg   [15:0] DATA_RD;
 
   //test regs
   wire [(16*16 -1):0] test_reg;
@@ -55,7 +55,7 @@ assign io_data_o = DATA_RD;
     'h0138 : DATA_RD = test_reg[16*14+:16];
     'h013c : DATA_RD = test_reg[16*15+:16];
 
-    default : DATA_RD = 32'h0;
+    default : DATA_RD = 16'h0;
     endcase
   end
 //reg write

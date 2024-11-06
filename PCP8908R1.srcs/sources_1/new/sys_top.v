@@ -13,9 +13,9 @@ module sys_top # (
     input     fmc_clk     ,  //FMC的ADDA时钟
     input     fmc_nl        ,  //低电平有效的FMC总线忙闲信号
     output    fmc_nwait     ,  //低电平有效的FMC总线等待信号
-    output    fmc_nwe       ,  //低电平有效的FMC总线写使能信号
-    output    fmc_ncs       ,  //低电平有效的FMC总线片选信号
-    output    fmc_noe       ,  //低电平有效的FMC总线读使能信号
+    input    fmc_nwe       ,  //低电平有效的FMC总线写使能信号
+    input    fmc_ncs       ,  //低电平有效的FMC总线片选信号
+    input    fmc_noe       ,  //低电平有效的FMC总线读使能信号
     output    fmc_int       ,  //MCU的中断信号
     output    mcu_int       ,  //MCU的中断信号
     //AD转换模块的接口
@@ -42,8 +42,8 @@ module sys_top # (
     wire        rst_n;               //系统复位信号
     wire  [31:0] BUS_ADDR;
 //   wire  [3:0]  BUS_BE；
-    wire  [31:0] BUS_DATA_WR;
-    wire  [31:0] BUS_DATA_RD;
+    wire  [15:0] BUS_DATA_WR;
+    wire  [15:0] BUS_DATA_RD;
     reg temp_valid;
     //AD转换模块的接口
     reg adc_porta_en  = 1'b1;
@@ -94,7 +94,7 @@ module sys_top # (
     assign rst_n =  sys_rst_n && locked; 
     assign ad_shdna = module_control[0];
     assign ad_shdnb = module_control[1];
-    // assign ad_clk =  clkB_65m; 
+    assign fmc_nwait =  1'b1; 
 
     //PLL模块
     clk_wiz_0 u_pll
