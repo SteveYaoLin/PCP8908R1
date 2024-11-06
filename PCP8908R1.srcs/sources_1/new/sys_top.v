@@ -191,21 +191,21 @@ adc_data_sync #(
     .adc_data(ad_portb_data),
     .sync_data(sync_portb_data)
 );
-//ila_0 ila_0(
-//.clk	(clkA_65m),
-//.probe0	(fifo_data_porta),
-//.probe1	(fifo_data_portb),
-//.probe2	(m_axis_data_tdata_porta[15:0]),
-//.probe3	(m_axis_data_tdata_porta[31:16]),
-//.probe4	(m_axis_data_tuser_porta[13:0]),
-//.probe5	(data_modulus_porta),
-//.probe6	(data_phase_porta),
-//.probe7	(modulus_porta_cnt),
-//.probe8	({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,m_axis_data_tlast_porta,data_eop_porta,phase_valid_porta}),
-//.probe9	(temp_cnt[15:0])
-////.probe10(),
-////.probe11()
-//);
+ila_0 ila_0(
+.clk	(clk_130m),
+.probe0	(fifo_data_porta),
+.probe1	(fifo_data_portb),
+.probe2	(m_axis_data_tdata_porta[15:0]),
+.probe3	(m_axis_data_tdata_porta[31:16]),
+.probe4	(m_axis_data_tuser_porta[13:0]),
+.probe5	(data_modulus_porta),
+.probe6	(data_phase_porta),
+.probe7	(modulus_porta_cnt),
+.probe8	({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,m_axis_data_tlast_porta,data_eop_porta,phase_valid_porta}),
+.probe9	(temp_cnt[15:0])
+//.probe10(),
+//.probe11()
+);
 
 adc_fifo_ctrl  # (
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
@@ -340,19 +340,25 @@ breath_led u_breath_led(
 // `else
 parameter _CNT = 70000; // Ä¬ÈÏÖµ
 // `endif
-wire temp_valid;
+reg temp_valid;
 reg [31:0] temp_cnt ;
 always @(posedge clk_65m or negedge rst_n) begin
     if (!rst_n) begin
         temp_cnt <= 32'd0;
+        temp_valid <= 1'b0;
     end
     else if (temp_cnt == _CNT) begin
         temp_cnt <= 32'd0;
     end
-    else begin
+    else if (temp_cnt == 32'd199) begin
+        temp_valid <= 1'b1;
         temp_cnt <= temp_cnt + 1'b1;
     end
+    else begin
+        temp_cnt <= temp_cnt + 1'b1;
+        temp_valid <= 1'b0;
+    end
 end
-    assign temp_valid = ((temp_cnt == 32'd199)) ? 1'b1 : 1'b0;
+//    assign temp_valid = ((temp_cnt == 32'd199)) ? 1'b1 : 1'b0;
 
 endmodule
