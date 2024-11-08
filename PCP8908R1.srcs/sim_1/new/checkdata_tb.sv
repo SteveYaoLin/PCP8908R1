@@ -249,17 +249,17 @@ module checkdata_tb;
     #100;
     sys_rst_n = 1;  // De-assert reset after 100ns
     #6000;
-    @(posedge `ADCB_CLK )
-     force `ADCB_FIFO_BEGIN = 1;
-     @(posedge `ADCA_CLK )
-     force `ADCA_FIFO_BEGIN = 1;
-      $display("+");
-    #100;
-    @(posedge `ADCB_CLK )
-     force `ADCB_FIFO_BEGIN = 0;
-    @(posedge `ADCA_CLK )
-     force `ADCA_FIFO_BEGIN = 0;
-     $display("end");
+    // @(posedge `ADCB_CLK )
+    //  force `ADCB_FIFO_BEGIN = 1;
+    //  @(posedge `ADCA_CLK )
+    //  force `ADCA_FIFO_BEGIN = 1;
+    //   $display("+");
+    // #100;
+    // @(posedge `ADCB_CLK )
+    //  force `ADCB_FIFO_BEGIN = 0;
+    // @(posedge `ADCA_CLK )
+    //  force `ADCA_FIFO_BEGIN = 0;
+    //  $display("end");
 
     
   end

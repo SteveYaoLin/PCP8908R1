@@ -93,7 +93,7 @@ module sys_top # (
 
     wire [_COUNTER_WIDTH - 1 :0] modulus_porta_cnt;
     wire [_COUNTER_WIDTH - 1 :0] phase_porta_cnt;
-    wire [_COUNTER_WIDTH - 1 :0] modulus_portba_cnt;
+    wire [_COUNTER_WIDTH - 1 :0] modulus_portb_cnt;
     wire [_COUNTER_WIDTH - 1 :0] phase_portb_cnt;
 
     // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
@@ -195,16 +195,16 @@ ila_0 ila_0(
 .clk	(clk_130m),
 .probe0	(fifo_data_porta),
 .probe1	(fifo_data_portb),
-.probe2	(m_axis_data_tdata_porta[15:0] ),
-.probe3	(m_axis_data_tdata_porta[31:16]),
-.probe4	(m_axis_data_tuser_porta[13:0] ),
+.probe2	(modulus_portb_cnt),
+.probe3	(phase_portb_cnt),
+.probe4	(data_phase_portb),
 .probe5	(data_modulus_porta),
 .probe6	(data_phase_porta),
 .probe7	(modulus_porta_cnt),
-.probe8	({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,m_axis_data_tlast_porta,data_eop_porta,phase_valid_porta}),
+.probe8	({m_axis_data_tuser_porta[7:0],m_axis_data_tuser_portb[7:0]}),
 .probe9	(phase_porta_cnt),
 .probe10(data_modulus_portb),
-.probe11(data_phase_portb)
+.probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,data_eop_porta,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,data_eop_portb,data_valid_portb,phase_valid_porta})
 );
 
 adc_fifo_ctrl  # (

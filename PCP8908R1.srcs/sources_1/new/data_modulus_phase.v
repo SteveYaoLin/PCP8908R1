@@ -78,7 +78,7 @@ always @ (posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         modulus_cnt <= 'h0;
     end
-    else if(source_valid_d[0] == 1'b1) begin
+    else if(data_valid == 1'b1) begin
         modulus_cnt <= modulus_cnt + 1'b1;
     end
     else begin
@@ -90,7 +90,7 @@ always @ (posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         phase_cnt <= 'h0;
     end
-    else if(source_valid_d[0] == 1'b1) begin
+    else if(phase_valid == 1'b1) begin
         phase_cnt <= phase_cnt + 1'b1;
     end
     else begin

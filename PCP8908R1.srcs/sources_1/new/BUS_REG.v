@@ -20,12 +20,12 @@ module BUS (
  
 );
 
-  wire C = io_clk;
-  wire R = rst_n;
-  wire W = ~(io_wr|io_cs); 
-  wire [1:0]BE = io_be;
-  wire [15:0] A = address_reg;
-  wire [15:0] D = io_data;
+  wire C ;
+  wire R ;
+  wire W ; 
+  wire [1:0]BE;
+  wire [15:0] A ;
+  wire [15:0] D ;
   reg  [15:0] DATA_RD;
   wire [15:0] ADDR_RD;
   reg [15:0]address_reg;
@@ -39,6 +39,9 @@ assign  addrphase = io_nadv | io_cs;
   assign BE = io_be;
   assign A = address_reg;
   assign D = io_data;
+  assign C = io_clk;
+  assign R = rst_n;
+  assign W = ~(io_wr|io_cs); 
 //create addrreg
 always@(posedge io_clk or negedge rst_n)
 	begin
