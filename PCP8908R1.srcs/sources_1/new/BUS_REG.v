@@ -84,23 +84,23 @@ end
     endcase
   end
 //reg write
-bus_write #('h0002,'d2) X0002 (R,C,W,BE,A,D, module_control);
-bus_write #('h0100,'d2) X0100 (R,C,W,BE,A,D, test_reg[16*0 +:16]);
-bus_write #('h0104,'d2) X0104 (R,C,W,BE,A,D, test_reg[16*1 +:16]);
-bus_write #('h0108,'d2) X0108 (R,C,W,BE,A,D, test_reg[16*2 +:16]);
-bus_write #('h010c,'d2) X010c (R,C,W,BE,A,D, test_reg[16*3 +:16]);
-bus_write #('h0110,'d2) X0110 (R,C,W,BE,A,D, test_reg[16*4 +:16]);
-bus_write #('h0114,'d2) X0114 (R,C,W,BE,A,D, test_reg[16*5 +:16]);
-bus_write #('h0118,'d2) X0118 (R,C,W,BE,A,D, test_reg[16*6 +:16]);
-bus_write #('h011c,'d2) X011c (R,C,W,BE,A,D, test_reg[16*7 +:16]);
-bus_write #('h0120,'d2) X0120 (R,C,W,BE,A,D, test_reg[16*8 +:16]);
-bus_write #('h0124,'d2) X0124 (R,C,W,BE,A,D, test_reg[16*9 +:16]);
-bus_write #('h0128,'d2) X0128 (R,C,W,BE,A,D, test_reg[16*10+:16]);
-bus_write #('h012c,'d2) X012c (R,C,W,BE,A,D, test_reg[16*11+:16]);
-bus_write #('h0130,'d2) X0130 (R,C,W,BE,A,D, test_reg[16*12+:16]);
-bus_write #('h0134,'d2) X0134 (R,C,W,BE,A,D, test_reg[16*13+:16]);
-bus_write #('h0138,'d2) X0138 (R,C,W,BE,A,D, test_reg[16*14+:16]);
-bus_write #('h013c,'d2) X013c (R,C,W,BE,A,D, test_reg[16*15+:16]);
+bus_write #('h0002,'d2) X0002 (R,C,W,BE,A,D,module_control);
+bus_write #('h0100,'d2) X0100 (R,C,W,BE,A,D,test_reg[16*0 +:16]);
+bus_write #('h0104,'d2) X0104 (R,C,W,BE,A,D,test_reg[16*1 +:16]);
+bus_write #('h0108,'d2) X0108 (R,C,W,BE,A,D,test_reg[16*2 +:16]);
+bus_write #('h010c,'d2) X010c (R,C,W,BE,A,D,test_reg[16*3 +:16]);
+bus_write #('h0110,'d2) X0110 (R,C,W,BE,A,D,test_reg[16*4 +:16]);
+bus_write #('h0114,'d2) X0114 (R,C,W,BE,A,D,test_reg[16*5 +:16]);
+bus_write #('h0118,'d2) X0118 (R,C,W,BE,A,D,test_reg[16*6 +:16]);
+bus_write #('h011c,'d2) X011c (R,C,W,BE,A,D,test_reg[16*7 +:16]);
+bus_write #('h0120,'d2) X0120 (R,C,W,BE,A,D,test_reg[16*8 +:16]);
+bus_write #('h0124,'d2) X0124 (R,C,W,BE,A,D,test_reg[16*9 +:16]);
+bus_write #('h0128,'d2) X0128 (R,C,W,BE,A,D,test_reg[16*10+:16]);
+bus_write #('h012c,'d2) X012c (R,C,W,BE,A,D,test_reg[16*11+:16]);
+bus_write #('h0130,'d2) X0130 (R,C,W,BE,A,D,test_reg[16*12+:16]);
+bus_write #('h0134,'d2) X0134 (R,C,W,BE,A,D,test_reg[16*13+:16]);
+bus_write #('h0138,'d2) X0138 (R,C,W,BE,A,D,test_reg[16*14+:16]);
+bus_write #('h013c,'d2) X013c (R,C,W,BE,A,D,test_reg[16*15+:16]);
 
 //ila_0 ila_0(
 //.clk	(io_clk),

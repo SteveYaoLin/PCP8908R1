@@ -195,16 +195,16 @@ ila_0 ila_0(
 .clk	(clk_130m),
 .probe0	(fifo_data_porta),
 .probe1	(fifo_data_portb),
-.probe2	(m_axis_data_tdata_porta[15:0]),
+.probe2	(m_axis_data_tdata_porta[15:0] ),
 .probe3	(m_axis_data_tdata_porta[31:16]),
-.probe4	(m_axis_data_tuser_porta[13:0]),
+.probe4	(m_axis_data_tuser_porta[13:0] ),
 .probe5	(data_modulus_porta),
 .probe6	(data_phase_porta),
 .probe7	(modulus_porta_cnt),
 .probe8	({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,m_axis_data_tlast_porta,data_eop_porta,phase_valid_porta}),
-.probe9	(temp_cnt[15:0])
-//.probe10(),
-//.probe11()
+.probe9	(phase_porta_cnt),
+.probe10(data_modulus_portb),
+.probe11(data_phase_portb)
 );
 
 adc_fifo_ctrl  # (
