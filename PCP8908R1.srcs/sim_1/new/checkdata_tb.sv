@@ -165,9 +165,9 @@ module checkdata_tb;
   initial begin
     for (i = 0; i < _FIFO_DEPTH ; i = i + 1) begin  // Generate 10 sine wave cycles for demonstration
       @(posedge ad_porta_clk);
-      sine_wave_real = 14'h2000 + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN));  // 正弦波生成公�?
-      sine_wave = sine_wave_real;  // 将实数转换为14位信�?
-      ad_porta_data = sine_wave;  // 将正弦波信号传�?�给ad_porta_data
+      sine_wave_real = 14'h2000 + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN));  
+      sine_wave = sine_wave_real; 
+      ad_porta_data = sine_wave;  
         if (i == (_FIFO_DEPTH - 1)) begin
             i=0;
             once = 1;
