@@ -73,8 +73,8 @@ module sys_top # (
     wire m_axis_data_tlast_porta;
     wire s_axis_data_tready_porta;
 
-    wire [31:0]m_axis_data_tdata_portb;
-    wire [23:0]m_axis_data_tuser_portb;
+    // wire [31:0]m_axis_data_tdata_portb;
+    // wire [23:0]m_axis_data_tuser_portb;
     wire m_axis_data_tvalid_portb;
     wire m_axis_data_tlast_portab;
     wire s_axis_data_tready_portb;
@@ -96,6 +96,7 @@ module sys_top # (
     wire [_COUNTER_WIDTH - 1 :0] modulus_portb_cnt;
     wire [_COUNTER_WIDTH - 1 :0] phase_portb_cnt;
 
+    reg temp_valid;
     // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
 
     //assign BUS_BE = 4'b1111;
@@ -340,7 +341,7 @@ breath_led u_breath_led(
 // `else
 parameter _CNT = 70000; // Ä¬ÈÏÖµ
 // `endif
-reg temp_valid;
+
 reg [31:0] temp_cnt ;
 always @(posedge clk_65m or negedge rst_n) begin
     if (!rst_n) begin

@@ -18,8 +18,8 @@ module data_modulus_phase # (
     output            data_eop,      // ȡģ���������ֹ�ź�?
     output            data_valid,    // ȡģ���������Ч�ź�?
 
-    output [_COUNTER_WIDTH - 1 :0] modulus_cnt,
-    output [_COUNTER_WIDTH - 1 :0] phase_cnt,
+    output reg  [_COUNTER_WIDTH - 1 :0] modulus_cnt,
+    output reg  [_COUNTER_WIDTH - 1 :0] phase_cnt,
     // ȡ��λ���������ݽӿ�
     output  [15:0]    data_phase,    // ȡ��λ�������?
     output            phase_valid    // ȡ��λ���������Ч�ź�?
@@ -35,8 +35,8 @@ reg  [_DATA_WIDTH - 1 :0]     source_eop_d;
 // parameter _FIFO_DEPTH_LOG2 = 14;
 parameter _FIFO_DEPTH_LOG2 = $clog2(_FIFO_DEPTH);
 
-reg [_COUNTER_WIDTH - 1 :0] modulus_cnt;
-reg [_COUNTER_WIDTH - 1 :0] phase_cnt;
+// reg [_COUNTER_WIDTH - 1 :0] modulus_cnt;
+// reg [_COUNTER_WIDTH - 1 :0] phase_cnt;
 
 assign  data_eop = source_eop_d[7];
 
