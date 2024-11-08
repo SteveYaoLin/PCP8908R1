@@ -116,7 +116,7 @@ cordic_1 u_cordic_1 (
     .aclk(clk),
     .aclken(aclken),
     .aresetn(rst_n),
-    .s_axis_cartesian_tvalid(source_valid_d[1]),
+    .s_axis_cartesian_tvalid(source_valid),
     .s_axis_cartesian_tdata({data_real, data_imag}),
     .m_axis_dout_tvalid(phase_valid),
     .m_axis_dout_tdata(data_phase)

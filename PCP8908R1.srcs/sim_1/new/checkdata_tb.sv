@@ -172,9 +172,9 @@ module checkdata_tb;
             i=0;
             once = 1;
         end
-      if ((!once) & (i<100))begin
-        $display("Sine wave value at time %0d: %0d", i, sine_wave);
-      end
+      // if ((!once) & (i<100))begin
+      //   $display("Sine wave value at time %0d: %0d", i, sine_wave);
+      // end
     end
   end
    
@@ -248,7 +248,41 @@ module checkdata_tb;
 
     #100;
     sys_rst_n = 1;  // De-assert reset after 100ns
-    #6000;
+    #5000;
+
+   
+    @(posedge `BUS_CLOCK)
+    fsmc_read(16'h0004, read_data);
+    $display("Read data from 0x0004: %h", read_data);
+
+    // Perform write operation to address 0x0102 with data 0x1234
+    #200;
+    @(posedge `BUS_CLOCK)
+    fsmc_write(16'h0002, 16'h1234);
+    $display("Written 0x1234 to address 0x0002");
+
+    // Read back data from address 0x0102
+    #200;
+    @(posedge `BUS_CLOCK)
+    fsmc_read(16'h0002, read_data);
+    $display("Read back data from 0x0102: %h", read_data);
+
+    #200;
+    @(posedge `BUS_CLOCK)
+    fsmc_write(16'h0002, 16'h5591);
+    $display("Written 0x5591 to address 0x0002");
+
+    // Read back data from address 0x0102
+    #200;
+    @(posedge `BUS_CLOCK)
+    fsmc_read(16'h0002, read_data);
+    $display("Read back data from 0x0002: %h", read_data);
+
+    #200;
+    @(posedge `BUS_CLOCK)
+    fsmc_read(16'h0004, read_data);
+    $display("Read data from 0x0004: %h", read_data);
+
     // @(posedge `ADCB_CLK )
     //  force `ADCB_FIFO_BEGIN = 1;
     //  @(posedge `ADCA_CLK )
@@ -260,7 +294,8 @@ module checkdata_tb;
     // @(posedge `ADCA_CLK )
     //  force `ADCA_FIFO_BEGIN = 0;
     //  $display("end");
-
+  #5000;
+  // $finish;
     
   end
 
