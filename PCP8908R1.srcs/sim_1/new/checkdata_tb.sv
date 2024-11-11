@@ -113,25 +113,26 @@ module checkdata_tb;
     reg clk_50m;
     reg once;
     reg [2:0] delay_cnt_adcb ;
+    reg [13:0] increace_data;
   // Generate increace data for portb
   always #10 sys_clk = ~sys_clk;  // 50M clock -> period = 20ns (T/2 = 10ns)
 
   // genarate ad_portb_data increace data
     always @(posedge ad_portb_clk or negedge sys_rst_n) begin
     if (!sys_rst_n) begin
-      ad_portb_data = 0;
+      increace_data = 0;
       ad_ofb = 0;
       delay_cnt_adcb <= 0;
     end
     else if (`ADCB_FIFO_BEGIN == 1'b1) begin
-      ad_portb_data = ad_portb_data + 1;  // Random 14-bit data for porta
+      increace_data = increace_data + 1;  // Random 14-bit data for porta
     end
-    else if  ((|ad_portb_data)&(ad_portb_data < (_FIFO_DEPTH + 100)))begin
+    else if  ((|increace_data)&(increace_data < (_FIFO_DEPTH + 100)))begin
       // ad_ofa = ~ad_ofa;  // Toggle enable signal
-      ad_portb_data <= ad_portb_data + 1;
+      increace_data <= increace_data + 1;
     end
     else begin
-      ad_portb_data <= 0;
+      increace_data <= 0;
     end
 
   end
@@ -158,23 +159,31 @@ module checkdata_tb;
       // end
 // Generate sine wave signal based on 65M clock (13 clock cycles per period)
   real sine_wave_real;
+  real cos_wave_real;
   integer i;
   reg [13:0] sine_wave;
-  real amplitude = 14'h1FFF;  // 幅�??
+  reg [13:0] cos_wave;
+  real amplitude = 14'h1FFF;  
 
   initial begin
     for (i = 0; i < _FIFO_DEPTH ; i = i + 1) begin  // Generate 10 sine wave cycles for demonstration
       @(posedge ad_porta_clk);
-      sine_wave_real = 14'h2000 + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN));  
+      sine_wave_real = (amplitude+1) + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN)); 
+      cos_wave_real  =  (amplitude+1) + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN) + 3.14159/2); 
+      // wave = A + A*$sin(2*w *pi*t + w1 )
+      // wave = A + A*$sin(2*pi/_FRE_SAMPLE*_FREVIN*t + w1 )
       sine_wave = sine_wave_real; 
+      cos_wave = cos_wave_real;
       ad_porta_data = sine_wave;  
+      ad_portb_data = cos_wave;
         if (i == (_FIFO_DEPTH - 1)) begin
             i=0;
             once = 1;
         end
-      // if ((!once) & (i<100))begin
-      //   $display("Sine wave value at time %0d: %0d", i, sine_wave);
-      // end
+      if ((!once) & (i<100))begin
+        $display("Sine wave value at time %0d: %0d", i, sine_wave);
+        $display("cos wave value at time %0d: %0d", i, cos_wave);
+      end
     end
   end
    
