@@ -113,7 +113,7 @@ cordic_1 u_cordic_1 (
     .aclken(aclken),
     .aresetn(rst_n),
     .s_axis_cartesian_tvalid(source_valid),
-    .s_axis_cartesian_tdata({data_real, data_imag}),
+    .s_axis_cartesian_tdata({source_imag, source_real}),
     .m_axis_dout_tvalid(phase_valid),
     .m_axis_dout_tdata(data_phase)
 );
