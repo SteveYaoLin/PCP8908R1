@@ -82,13 +82,13 @@ module sys_top # (
     wire  [15:0]    data_modulus_porta  ;  // 取模后的数据
     wire            data_eop_porta      ;      // 取模后输出的终止信号
     wire            data_valid_porta    ;    // 取模后的数据有效信号
-    wire  [15:0]    data_phase_porta    ;    // 取相位后的数据
+    wire  [_DATA_WIDTH:0]    data_phase_porta    ;    // 取相位后的数据
     wire            phase_valid_porta   ;    // 取相位后的数据有效信号
 
     wire  [15:0]    data_modulus_portb  ;  // 取模后的数据
     wire            data_eop_portb      ;      // 取模后输出的终止信号
     wire            data_valid_portb    ;    // 取模后的数据有效信号
-    wire  [15:0]    data_phase_portb    ;    // 取相位后的数据
+    wire  [_DATA_WIDTH:0]    data_phase_portb    ;    // 取相位后的数据
     wire            phase_valid_portb   ;    // 取相位后的数据有效信号
 
     wire [_COUNTER_WIDTH - 1 :0] modulus_porta_cnt;

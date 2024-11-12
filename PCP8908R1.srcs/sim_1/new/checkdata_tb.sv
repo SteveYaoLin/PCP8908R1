@@ -38,7 +38,7 @@
 
 parameter _FIFO_DEPTH = 16384;
 parameter _FRE_SAMPLE = 65;
-parameter _FREVIN = 13.56;
+parameter _FREVIN = 1.356;
 parameter _COUNTER_WIDTH = 14;
 parameter _DATA_WIDTH = 14;
 
