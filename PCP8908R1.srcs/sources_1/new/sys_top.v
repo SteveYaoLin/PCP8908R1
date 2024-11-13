@@ -96,6 +96,9 @@ module sys_top # (
     wire [_COUNTER_WIDTH - 1 :0] modulus_portb_cnt;
     wire [_COUNTER_WIDTH - 1 :0] phase_portb_cnt;
 
+    wire [_DATA_WIDTH-1:0]          phase_diff;
+    wire                            polarity;
+
     reg temp_valid;
     // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
 
@@ -165,10 +168,27 @@ BUS u_bus(
 
     .module_status1( data_modulus_porta ),
     .module_status2( data_phase_porta ),
-    .module_status3( data_modulus_portb ),
+    .module_status3( {polarity,phase_diff} ),
     .module_status4( data_phase_portb ),
     .module_control(module_control)
 );
+
+phase_difference # (
+    ._DATA_WIDTH(14),
+    ._COUNTER_WIDTH(14)
+) u_phase_difference (
+    .clk(clk_130m),
+    .rst_n(rst_n),
+    .save_cnt('d1128),
+    .cnt_limit_down('d252),
+    .data_phase_porta(data_phase_porta),
+    .phase_porta_cnt(phase_porta_cnt),
+    .data_phase_portb(data_phase_portb),
+    .phase_portb_cnt(phase_portb_cnt),
+    .phase_diff(phase_diff),
+    .polarity(polarity)
+);
+
 
  // ±÷”–≈∫≈ª∫≥Â
     BUFG bufa (.I(clkA_65m),.O(ad_porta_clk));

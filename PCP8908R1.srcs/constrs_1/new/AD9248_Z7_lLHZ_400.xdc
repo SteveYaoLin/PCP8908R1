@@ -119,7 +119,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports fmc_noe  ]
 set_property IOSTANDARD LVCMOS33 [get_ports fmc_int  ]
 set_property IOSTANDARD LVCMOS33 [get_ports mcu_int  ]
 
-set_property PACKAGE_PIN T19 [get_ports fmc_clk  ]
+set_property PACKAGE_PIN U19 [get_ports fmc_clk  ]
 set_property PACKAGE_PIN T12 [get_ports fmc_nl   ]
 set_property PACKAGE_PIN P14 [get_ports fmc_nwait]
 set_property PACKAGE_PIN R14 [get_ports fmc_nwe  ]
