@@ -96,7 +96,7 @@ module sys_top # (
     wire [_COUNTER_WIDTH - 1 :0] modulus_portb_cnt;
     wire [_COUNTER_WIDTH - 1 :0] phase_portb_cnt;
 
-    wire [_DATA_WIDTH-1:0]          phase_diff;
+    wire [_DATA_WIDTH:0]          phase_diff;
     wire                            polarity;
 
     reg temp_valid;

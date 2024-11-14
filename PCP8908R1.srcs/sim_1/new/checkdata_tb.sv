@@ -169,7 +169,7 @@ module checkdata_tb;
     for (i = 0; i < _FIFO_DEPTH ; i = i + 1) begin  // Generate 10 sine wave cycles for demonstration
       @(posedge ad_porta_clk);
       sine_wave_real = (amplitude+1) + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN)); 
-      cos_wave_real  =  (amplitude+1) + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN) + 3.14159/2); 
+      cos_wave_real  =  (amplitude+1) + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN) + 3.14159/4); 
       // wave = A + A*$sin(2*w *pi*t + w1 )
       // wave = A + A*$sin(2*pi/_FRE_SAMPLE*_FREVIN*t + w1 )
       sine_wave = sine_wave_real; 
