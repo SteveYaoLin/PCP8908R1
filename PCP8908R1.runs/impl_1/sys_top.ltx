@@ -336,13 +336,16 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 13,
+                                "rightIndex": 14,
                                 "portIndex": 4,
                                 "nets": [
                                     {
                                         "name": "data_phase_portb",
                                         "isBus": true,
                                         "subnets": [
+                                            {
+                                                "name": "data_phase_portb[14]"
+                                            },
                                             {
                                                 "name": "data_phase_portb[13]"
                                             },
@@ -462,16 +465,13 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 15,
+                                "rightIndex": 14,
                                 "portIndex": 6,
                                 "nets": [
                                     {
                                         "name": "data_phase_porta",
                                         "isBus": true,
                                         "subnets": [
-                                            {
-                                                "name": "data_phase_porta[15]"
-                                            },
                                             {
                                                 "name": "data_phase_porta[14]"
                                             },
@@ -620,36 +620,57 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 7,
+                                "rightIndex": 14,
                                 "portIndex": 8,
                                 "nets": [
                                     {
-                                        "name": "m_axis_data_tuser_portb",
+                                        "name": "phase_diff",
                                         "isBus": true,
                                         "subnets": [
                                             {
-                                                "name": "m_axis_data_tuser_portb[7]"
+                                                "name": "phase_diff[14]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[6]"
+                                                "name": "phase_diff[13]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[5]"
+                                                "name": "phase_diff[12]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[4]"
+                                                "name": "phase_diff[11]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[3]"
+                                                "name": "phase_diff[10]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[2]"
+                                                "name": "phase_diff[9]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[1]"
+                                                "name": "phase_diff[8]"
                                             },
                                             {
-                                                "name": "m_axis_data_tuser_portb[0]"
+                                                "name": "phase_diff[7]"
+                                            },
+                                            {
+                                                "name": "phase_diff[6]"
+                                            },
+                                            {
+                                                "name": "phase_diff[5]"
+                                            },
+                                            {
+                                                "name": "phase_diff[4]"
+                                            },
+                                            {
+                                                "name": "phase_diff[3]"
+                                            },
+                                            {
+                                                "name": "phase_diff[2]"
+                                            },
+                                            {
+                                                "name": "phase_diff[1]"
+                                            },
+                                            {
+                                                "name": "phase_diff[0]"
                                             }
                                         ]
                                     }
@@ -661,39 +682,13 @@
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": true,
-                                "leftIndex": 8,
+                                "leftIndex": 15,
                                 "rightIndex": 15,
                                 "portIndex": 8,
                                 "nets": [
                                     {
-                                        "name": "m_axis_data_tuser_porta",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "m_axis_data_tuser_porta[7]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[6]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[5]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[4]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[3]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[2]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[1]"
-                                            },
-                                            {
-                                                "name": "m_axis_data_tuser_porta[0]"
-                                            }
-                                        ]
+                                        "name": "polarity",
+                                        "isBus": false
                                     }
                                 ]
                             },
@@ -898,7 +893,7 @@
                                 "portIndex": 11,
                                 "nets": [
                                     {
-                                        "name": "data_eop_portb",
+                                        "name": "ad_ofb_IBUF",
                                         "isBus": false
                                     }
                                 ]
@@ -1010,7 +1005,7 @@
                                 "portIndex": 11,
                                 "nets": [
                                     {
-                                        "name": "data_eop_porta",
+                                        "name": "ad_ofa_IBUF",
                                         "isBus": false
                                     }
                                 ]

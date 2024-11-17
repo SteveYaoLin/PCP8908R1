@@ -99,6 +99,9 @@ module sys_top # (
     wire [_DATA_WIDTH:0]          phase_diff;
     wire                            polarity;
 
+    wire [15:0] cnt_limit_down           ;
+    wire [15:0] store_cnt                ;
+
     reg temp_valid;
     // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
 
@@ -170,6 +173,8 @@ BUS u_bus(
     .module_status2( data_phase_porta ),
     .module_status3( {polarity,phase_diff} ),
     .module_status4( data_phase_portb ),
+    .cnt_limit_down(cnt_limit_down),
+    .store_cnt(store_cnt),
     .module_control(module_control)
 );
 
@@ -179,8 +184,10 @@ phase_difference # (
 ) u_phase_difference (
     .clk(clk_130m),
     .rst_n(rst_n),
-    .save_cnt('d1128),
-    .cnt_limit_down('d252),
+    // .cnt_limit_up(store_cnt + cnt_limit_down),
+    // .cnt_limit_down(cnt_limit_down),
+    .cnt_limit_up(16383),
+    .cnt_limit_down(0),
     .data_phase_porta(data_phase_porta),
     .phase_porta_cnt(phase_porta_cnt),
     .data_phase_portb(data_phase_portb),
@@ -222,10 +229,10 @@ ila_0 ila_0(
 .probe5	(data_modulus_porta),
 .probe6	(data_phase_porta),
 .probe7	(modulus_porta_cnt),
-.probe8	({m_axis_data_tuser_porta[7:0],m_axis_data_tuser_portb[7:0]}),
+.probe8	({polarity,phase_diff}),
 .probe9	(phase_porta_cnt),
 .probe10(data_modulus_portb),
-.probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,data_eop_porta,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,data_eop_portb,data_valid_portb,phase_valid_porta})
+.probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,ad_ofa,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,ad_ofb,data_valid_portb,phase_valid_porta})
 );
 
 adc_fifo_ctrl  # (
