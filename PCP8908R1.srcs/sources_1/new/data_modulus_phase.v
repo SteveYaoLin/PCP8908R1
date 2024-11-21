@@ -31,6 +31,7 @@ reg  [_DATA_WIDTH - 1 :0]     data_real;
 reg  [_DATA_WIDTH - 1 :0]     data_imag;           
 reg  [_DATA_WIDTH - 1 :0]     source_valid_d;
 reg  [_DATA_WIDTH - 1 :0]     source_eop_d;
+wire [15:0] data_modulus_cordic;
 // wire test = 1'b1;
 // parameter _FIFO_DEPTH_LOG2 = 14;
 parameter _FIFO_DEPTH_LOG2 = $clog2(_FIFO_DEPTH);
@@ -94,7 +95,7 @@ always @ (posedge clk or negedge rst_n) begin
     end
 end
 
-
+assign data_modulus = {data_modulus_cordic[14:0],1'b0};
 
 cordic_0 u_cordic_0 (
     .aclk(clk),
@@ -104,7 +105,7 @@ cordic_0 u_cordic_0 (
     .s_axis_cartesian_tdata({4'h0,source_data}),
     .m_axis_dout_tvalid(data_valid),
     // .m_axis_dout_tlast(),
-    .m_axis_dout_tdata(data_modulus)
+    .m_axis_dout_tdata(data_modulus_cordic)
 );
 
 
