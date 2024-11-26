@@ -33,8 +33,7 @@ reg  [_DATA_WIDTH - 1 :0]     source_valid_d;
 reg  [_DATA_WIDTH - 1 :0]     source_eop_d;
 wire [15:0] data_modulus_cordic;
 // wire test = 1'b1;
-// parameter _FIFO_DEPTH_LOG2 = 14;
-parameter _FIFO_DEPTH_LOG2 = $clog2(_FIFO_DEPTH);
+
 
 assign  data_eop = source_eop_d[7];
 

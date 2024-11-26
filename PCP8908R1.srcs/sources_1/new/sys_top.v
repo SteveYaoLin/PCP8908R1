@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 module sys_top # (
-    parameter _COUNTER_WIDTH = 14,
+    // parameter _COUNTER_WIDTH = 14,
     parameter _DATA_WIDTH = 14,
     parameter _FIFO_DEPTH = 16384
 )
@@ -34,7 +34,7 @@ module sys_top # (
     output                ad_portb_clk      	  //AD转换模块的时钟
 
     );
-
+    parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
     //信号定义
     wire        clk_65m;            //65MHz时钟
     wire        clk_130m;            //100MHz时钟
@@ -103,7 +103,7 @@ module sys_top # (
     wire [15:0] store_cnt                ;
 
     reg temp_valid;
-    // parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
+    
 
     //assign BUS_BE = 4'b1111;
 
@@ -179,15 +179,18 @@ BUS u_bus(
 );
 
 phase_difference # (
-    ._DATA_WIDTH(14),
-    ._COUNTER_WIDTH(14)
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._COUNTER_WIDTH(_COUNTER_WIDTH)
 ) u_phase_difference (
     .clk(clk_130m),
     .rst_n(rst_n),
-    // .cnt_limit_up(store_cnt + cnt_limit_down),
-    // .cnt_limit_down(cnt_limit_down),
+`ifdef SIM   
     .cnt_limit_up(16383),
     .cnt_limit_down(0),
+`else
+    .cnt_limit_up(store_cnt + cnt_limit_down),
+    .cnt_limit_down(cnt_limit_down),
+`endif
     .data_phase_porta(data_phase_porta),
     .phase_porta_cnt(phase_porta_cnt),
     .data_phase_portb(data_phase_portb),
@@ -203,7 +206,7 @@ phase_difference # (
 
 //
 adc_data_sync #(
-    ._DATA_WIDTH(14)
+    ._DATA_WIDTH(_DATA_WIDTH)
 ) u_adc_sync_a(
     .clk_sync(clkA_65m),
     .sys_rst(rst_n),
@@ -212,7 +215,7 @@ adc_data_sync #(
 );
 
 adc_data_sync #(
-    ._DATA_WIDTH(14)
+    ._DATA_WIDTH(_DATA_WIDTH)
 ) u_adc_sync_b(
     .clk_sync(clkB_65m),
     .sys_rst(rst_n),
