@@ -18,13 +18,14 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
+
 `define  ADCA   checkdata_tb.uut.u1
 `define  ADCB   checkdata_tb.uut.u2
-`define   SYS_CLOCK checkdata_tb.uut.clk_130m
-`define   ADCA_CLK `ADCA.adc_clk
-`define BUS_CLOCK checkdata_tb.uut.clk_65m
-`define ADDR checkdata_tb.uut.fsmc_bridge.fsmc_db
-`define   ADCB_CLK `ADCB.adc_clk
+`define  SYS_CLOCK checkdata_tb.uut.clk_130m
+`define  ADCA_CLK `ADCA.adc_clk
+`define  BUS_CLOCK checkdata_tb.uut.clk_65m
+`define  ADDR checkdata_tb.uut.fsmc_bridge.fsmc_db
+`define  ADCB_CLK `ADCB.adc_clk
 `define  ADCB_FIFO_RDCNT `ADCB.fifo_rd_cnt
 `define  ADCA_FIFO_RDCNT `ADCA.fifo_rd_cnt
 
@@ -39,7 +40,7 @@
 parameter _FIFO_DEPTH = 16384;
 parameter _FRE_SAMPLE = 65;
 parameter _FREVIN = 13.56;
-parameter _COUNTER_WIDTH = 14;
+// parameter _COUNTER_WIDTH = 14;
 parameter _DATA_WIDTH = 14;
 
 module checkdata_tb;
@@ -81,7 +82,7 @@ module checkdata_tb;
 
   // Instantiate the sys_top module
   sys_top  # (
-    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    // ._COUNTER_WIDTH(_COUNTER_WIDTH),
     ._DATA_WIDTH(_DATA_WIDTH),
     ._FIFO_DEPTH(_FIFO_DEPTH)
   ) uut (
