@@ -2,7 +2,8 @@
 module sys_top # (
     // parameter _COUNTER_WIDTH = 14,
     parameter _DATA_WIDTH = 14,
-    parameter _FIFO_DEPTH = 16384
+    parameter _FIFO_DEPTH = 16384,
+    parameter _DUAL_WIDTH = 12
 )
 (
     input                 sys_clk     	,  //Ê±ÖÓÐÅºÅ
@@ -102,25 +103,27 @@ module sys_top # (
     wire [15:0] cnt_limit_down           ;
     wire [15:0] store_cnt                ;
 
-    wire  phase_porta_addr;
-    wire  phase_porta_data;
+    wire [_DUAL_WIDTH - 1 :0] dual_ram_addr;
+
     wire  phase_porta_busy;
     wire  phase_porta_en;
 
-    wire  phase_portb_addr;
-    wire  phase_portb_data;
+
     wire  phase_portb_busy;
     wire  phase_portb_en;
 
-    wire  modulus_porta_addr;
-    wire  modulus_porta_data;
+
     wire  modulus_porta_busy;
     wire  modulus_porta_en;
 
-    wire  modulus_portb_addr;
-    wire  modulus_portb_data;
     wire  modulus_portb_busy;
     wire  modulus_portb_en;
+
+    wire [_DATA_WIDTH:0] phase_porta_data;
+    wire [_DATA_WIDTH:0] phase_portb_data;
+
+    wire [_DATA_WIDTH:0] modulus_porta_data;
+    wire [_DATA_WIDTH:0] modulus_portb_data;
 
     reg temp_valid;
     
@@ -132,7 +135,7 @@ module sys_top # (
     assign ad_shdnb =1'b0;// module_control[1];
     assign ad_porta_oen = 1'b0;
     assign ad_portb_oen = 1'b0;
-    assign fmc_nwait =  1'b1; 
+    // assign fmc_nwait =  1'b1; 
 
     //PLLÄ£¿é
     clk_wiz_0 u_pll
@@ -195,7 +198,23 @@ BUS u_bus(
     .module_status4( data_phase_portb ),
     .cnt_limit_down(cnt_limit_down),
     .store_cnt(store_cnt),
-    .module_control(module_control)
+    .module_control(module_control),
+    .dual_ram_addr(dual_ram_addr),
+    .phase_porta_busy(phase_porta_busy),
+    .phase_porta_en(phase_porta_en),
+    .phase_portb_busy(phase_portb_busy),
+    .phase_portb_en(phase_portb_en),
+    .modulus_porta_busy(modulus_porta_busy),
+    .modulus_porta_en(modulus_porta_en),
+    .modulus_portb_busy(modulus_portb_busy),
+    .modulus_portb_en(modulus_portb_en),
+    .phase_porta_data   (fmc_adda_data),
+    .phase_portb_data   (fmc_adda_data),
+    .modulus_porta_data (fmc_adda_data),
+    .modulus_portb_data (fmc_adda_data),
+
+
+    .bus_wait(fmc_nwait)
 );
 
 phase_difference # (
@@ -222,7 +241,7 @@ phase_difference # (
 dual_ram_data # (
     ._DATA_WIDTH(_DATA_WIDTH),
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
-    ._DUAL_WIDTH(12)
+    ._DUAL_WIDTH(_DUAL_WIDTH)
 )  u_phase_porta (
     .clk(clk_130m),
     .rst_n(rst_n),
@@ -239,7 +258,7 @@ dual_ram_data # (
 dual_ram_data # (
     ._DATA_WIDTH(_DATA_WIDTH),
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
-    ._DUAL_WIDTH(12)
+    ._DUAL_WIDTH(_DUAL_WIDTH)
 )  u_phase_portb (
     .clk(clk_130m),
     .rst_n(rst_n),
@@ -256,7 +275,7 @@ dual_ram_data # (
 dual_ram_data # (
     ._DATA_WIDTH(_DATA_WIDTH),
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
-    ._DUAL_WIDTH(12)
+    ._DUAL_WIDTH(_DUAL_WIDTH)
 )  u_modulus_porta (
     .clk(clk_130m),
     .rst_n(rst_n),
@@ -273,7 +292,7 @@ dual_ram_data # (
 dual_ram_data # (
     ._DATA_WIDTH(_DATA_WIDTH),
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
-    ._DUAL_WIDTH(12)
+    ._DUAL_WIDTH(_DUAL_WIDTH)
 )  u_modulus_portb (
     .clk(clk_130m),
     .rst_n(rst_n),

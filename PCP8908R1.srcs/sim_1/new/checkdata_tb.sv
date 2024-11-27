@@ -84,7 +84,8 @@ module checkdata_tb;
   sys_top  # (
     // ._COUNTER_WIDTH(_COUNTER_WIDTH),
     ._DATA_WIDTH(_DATA_WIDTH),
-    ._FIFO_DEPTH(_FIFO_DEPTH)
+    ._FIFO_DEPTH(_FIFO_DEPTH),
+    ._DUAL_WIDTH(12)
   ) uut (
     .sys_clk(sys_clk),
     .sys_rst_n(sys_rst_n),

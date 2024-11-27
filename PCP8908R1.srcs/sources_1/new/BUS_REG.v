@@ -1,4 +1,5 @@
-module BUS (
+module BUS #(parameter _DUAL_WIDTH = 12)
+(
   input io_clk,
   input rst_n,
   input burst_clk,
@@ -19,9 +20,37 @@ module BUS (
   //OUTPUT REG
   output  reg [15:0] cnt_limit_down           ,
   output  reg [15:0] store_cnt                ,
-  output  reg [15:0] module_control
- 
+  output  reg [15:0] module_control           ,
+  //DUAL RAM
+  output [_DUAL_WIDTH - 1 :0] dual_ram_addr,
+  
+  input  phase_porta_busy,
+  output  phase_porta_en,
+
+  // output [_DUAL_WIDTH - 1 :0] phase_portb_addr,
+  
+  input   phase_portb_busy,
+  output  phase_portb_en,
+
+  // output [_DUAL_WIDTH - 1 :0] modulus_porta_addr,
+  
+  input   modulus_porta_busy,
+  output  modulus_porta_en,
+
+  // output [_DUAL_WIDTH - 1 :0] modulus_portb_addr,
+  
+  input   modulus_portb_busy,
+  output  modulus_portb_en  ,
+
+  input  [15:0]     phase_porta_data,
+  input  [15:0]     phase_portb_data,
+  input  [15:0]     modulus_porta_data,
+  input  [15:0]     modulus_portb_data,
+
+  output bus_wait 
+
 );
+
 parameter _WR_DELAY = 4'd2;
 parameter _RD_DELAY = 4'd1;
 wire addr_0002_catch ;
@@ -37,6 +66,7 @@ wire wrn ;
   wire [15:0] ADDR_RD;
   wire [15:0] ADDR_WR;
   reg [15:0] address_reg;
+  reg [15:0] address_dual_ram;
   reg [15:0] module_test;
 
 
@@ -60,6 +90,8 @@ assign  addrphase = io_nadv | io_cs;
 assign  rdn = io_cs | rd_delay_assecced | io_rd;
 assign  wrn = io_cs | wr_delay_assecced | io_wr;
 
+assign bus_wait = phase_porta_busy | phase_portb_busy | modulus_porta_busy | modulus_portb_busy;
+
   // assign BE = io_be;
   // assign A = address_reg;
   // assign D = io_data;
@@ -70,6 +102,35 @@ assign  wrn = io_cs | wr_delay_assecced | io_wr;
   assign ADDR_RD_test = address_reg & {16{~rdn}} & {16{~io_cs}};
   assign ADDR_WR_test = address_reg & {16{~wrn}} & {16{~io_cs}};
   assign addr_0002_catch = (address_reg == 16'h0002) ? 1'b1 : 1'b0;
+
+  //create addrreg
+always@(posedge io_clk or negedge rst_n)
+	begin
+		if(!rst_n)
+			begin
+				address_reg <= 16'd0;
+			end
+		else if ((addrphase== 1'b0) & io_data[14] == 1'b0 )begin 
+				address_reg <= {io_data[14:0],1'b0};
+			end
+		else begin
+			address_reg <= address_reg;
+	end
+end
+
+always@(posedge io_clk or negedge rst_n)
+	begin
+		if(!rst_n)
+			begin
+				address_dual_ram <= 16'd0;
+			end
+		else if ((addrphase== 1'b0) & io_data[14] == 1'b1 )begin 
+				address_dual_ram <= {1'b0,io_data[13:0],1'b0};
+			end
+		else begin
+			address_dual_ram <= address_dual_ram;
+	end
+end
 
 // wr keeps counter
 always@(posedge io_clk or negedge rst_n)
@@ -113,20 +174,7 @@ always@(posedge io_clk or negedge rst_n)
   end
   assign  rd_delay_assecced = (rd_delay_cnt == _RD_DELAY) ? 1'b0 : 1'b1;
 
-//create addrreg
-always@(posedge io_clk or negedge rst_n)
-	begin
-		if(!rst_n)
-			begin
-				address_reg <= 16'd0;
-			end
-		else if ((addrphase== 1'b0) & io_data[15] == 1'b0 )begin 
-				address_reg <= {io_data[14:0],1'b0};
-			end
-		else begin
-			address_reg <= address_reg;
-	end
-end
+
 // READ
   always @(*) begin
     case (ADDR_RD)
@@ -162,6 +210,8 @@ end
     endcase
   end
 
+  
+  
   always @(posedge io_clk or negedge rst_n) begin
     if (!rst_n) begin
       module_control <= 0;
@@ -211,6 +261,17 @@ end
     end
   end
 
+  assign  dual_ram_addr  = address_dual_ram[_DUAL_WIDTH - 1 :0]      ;
+  assign  phase_porta_en =  ((address_dual_ram[15:_DUAL_WIDTH] == 4'h0)&rdn) ? 1'b1 : 1'b0;    
+
+  // assign  phase_portb_addr        ;
+  assign  phase_portb_en =  ((address_dual_ram[15:_DUAL_WIDTH] == 4'h1)&rdn) ? 1'b1 : 1'b0          ;
+
+  // assign  modulus_porta_addr      ;
+  assign  modulus_porta_en =  ((address_dual_ram[15:_DUAL_WIDTH] == 4'h2)&rdn) ? 1'b1 : 1'b0        ;
+
+  // assign  modulus_portb_addr      ;
+  assign  modulus_portb_en =  ((address_dual_ram[15:_DUAL_WIDTH] == 4'h3)&rdn) ? 1'b1 : 1'b0        ;
 
 //reg write
 // bus_write #('h0002,'d2) 
