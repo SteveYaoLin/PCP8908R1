@@ -102,6 +102,26 @@ module sys_top # (
     wire [15:0] cnt_limit_down           ;
     wire [15:0] store_cnt                ;
 
+    wire  phase_porta_addr;
+    wire  phase_porta_data;
+    wire  phase_porta_busy;
+    wire  phase_porta_en;
+
+    wire  phase_portb_addr;
+    wire  phase_portb_data;
+    wire  phase_portb_busy;
+    wire  phase_portb_en;
+
+    wire  modulus_porta_addr;
+    wire  modulus_porta_data;
+    wire  modulus_porta_busy;
+    wire  modulus_porta_en;
+
+    wire  modulus_portb_addr;
+    wire  modulus_portb_data;
+    wire  modulus_portb_busy;
+    wire  modulus_portb_en;
+
     reg temp_valid;
     
 
@@ -199,6 +219,73 @@ phase_difference # (
     .polarity(polarity)
 );
 
+dual_ram_data # (
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DUAL_WIDTH(12)
+)  u_phase_porta (
+    .clk(clk_130m),
+    .rst_n(rst_n),
+    .data_in        (data_phase_porta),
+    .data_cnt       (phase_porta_cnt),
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
+    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .porta_en       (phase_porta_en),
+    .data_o_addr    (phase_porta_addr),
+    .data_o         (phase_porta_data),
+    .data_ram_busy  (phase_porta_busy)
+);
+
+dual_ram_data # (
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DUAL_WIDTH(12)
+)  u_phase_portb (
+    .clk(clk_130m),
+    .rst_n(rst_n),
+    .data_in        (data_phase_portb),
+    .data_cnt       (phase_portb_cnt),
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
+    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .porta_en       (phase_portb_en),
+    .data_o_addr    (phase_portb_addr),
+    .data_o         (phase_portb_data),
+    .data_ram_busy  (phase_portb_busy)
+);
+
+dual_ram_data # (
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DUAL_WIDTH(12)
+)  u_modulus_porta (
+    .clk(clk_130m),
+    .rst_n(rst_n),
+    .data_in        (data_modulus_porta),
+    .data_cnt       (modulus_porta_cnt),
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
+    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .porta_en       (modulus_porta_en),
+    .data_o_addr    (modulus_porta_addr),
+    .data_o         (modulus_porta_data),
+    .data_ram_busy  (modulus_porta_busy)
+);
+
+dual_ram_data # (
+    ._DATA_WIDTH(_DATA_WIDTH),
+    ._COUNTER_WIDTH(_COUNTER_WIDTH),
+    ._DUAL_WIDTH(12)
+)  u_modulus_portb (
+    .clk(clk_130m),
+    .rst_n(rst_n),
+    .data_in        (data_modulus_portb),
+    .data_cnt       (modulus_portb_cnt),
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
+    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .porta_en       (modulus_portb_en),
+    .data_o_addr    (modulus_portb_addr),
+    .data_o         (modulus_portb_data),
+    .data_ram_busy  (modulus_portb_busy)
+);
 
  // ±÷”–≈∫≈ª∫≥Â
     BUFG bufa (.I(clkA_65m),.O(ad_porta_clk));
@@ -222,21 +309,21 @@ adc_data_sync #(
     .adc_data(ad_portb_data),
     .sync_data(sync_portb_data)
 );
-ila_0 ila_0(
-.clk	(clk_130m),
-.probe0	(fifo_data_porta),
-.probe1	(fifo_data_portb),
-.probe2	(modulus_portb_cnt),
-.probe3	(phase_portb_cnt),
-.probe4	(data_phase_portb),
-.probe5	(data_modulus_porta),
-.probe6	(data_phase_porta),
-.probe7	(modulus_porta_cnt),
-.probe8	({polarity,phase_diff}),
-.probe9	(phase_porta_cnt),
-.probe10(data_modulus_portb),
-.probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,ad_ofa,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,ad_ofb,data_valid_portb,phase_valid_porta})
-);
+// ila_0 ila_0(
+// .clk	(clk_130m),
+// .probe0	(fifo_data_porta),
+// .probe1	(fifo_data_portb),
+// .probe2	(modulus_portb_cnt),
+// .probe3	(phase_portb_cnt),
+// .probe4	(data_phase_portb),
+// .probe5	(data_modulus_porta),
+// .probe6	(data_phase_porta),
+// .probe7	(modulus_porta_cnt),
+// .probe8	({polarity,phase_diff}),
+// .probe9	(phase_porta_cnt),
+// .probe10(data_modulus_portb),
+// .probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,ad_ofa,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,ad_ofb,data_valid_portb,phase_valid_porta})
+// );
 
 adc_fifo_ctrl  # (
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
