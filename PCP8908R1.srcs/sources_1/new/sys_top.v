@@ -119,11 +119,11 @@ module sys_top # (
     wire  modulus_portb_busy;
     wire  modulus_portb_en;
 
-    wire [_DATA_WIDTH:0] phase_porta_data;
-    wire [_DATA_WIDTH:0] phase_portb_data;
+    // wire [_DATA_WIDTH:0] phase_porta_data;
+    // wire [_DATA_WIDTH:0] phase_portb_data;
 
-    wire [_DATA_WIDTH:0] modulus_porta_data;
-    wire [_DATA_WIDTH:0] modulus_portb_data;
+    // wire [_DATA_WIDTH:0] modulus_porta_data;
+    // wire [_DATA_WIDTH:0] modulus_portb_data;
 
     reg temp_valid;
     
@@ -208,10 +208,10 @@ BUS u_bus(
     .modulus_porta_en(modulus_porta_en),
     .modulus_portb_busy(modulus_portb_busy),
     .modulus_portb_en(modulus_portb_en),
-    .phase_porta_data   (fmc_adda_data),
-    .phase_portb_data   (fmc_adda_data),
-    .modulus_porta_data (fmc_adda_data),
-    .modulus_portb_data (fmc_adda_data),
+    // .phase_porta_data   (fmc_adda_data),
+    // .phase_portb_data   (fmc_adda_data),
+    // .modulus_porta_data (fmc_adda_data),
+    // .modulus_portb_data (fmc_adda_data),
 
 
     .bus_wait(fmc_nwait)
@@ -251,7 +251,7 @@ dual_ram_data # (
     .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
     .porta_en       (phase_porta_en),
     .data_o_addr    (phase_porta_addr),
-    .data_o         (phase_porta_data),
+    .data_o         (),
     .data_ram_busy  (phase_porta_busy)
 );
 
@@ -268,7 +268,7 @@ dual_ram_data # (
     .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
     .porta_en       (phase_portb_en),
     .data_o_addr    (phase_portb_addr),
-    .data_o         (phase_portb_data),
+    .data_o         (),
     .data_ram_busy  (phase_portb_busy)
 );
 
@@ -285,7 +285,7 @@ dual_ram_data # (
     .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
     .porta_en       (modulus_porta_en),
     .data_o_addr    (modulus_porta_addr),
-    .data_o         (modulus_porta_data),
+    .data_o         (),
     .data_ram_busy  (modulus_porta_busy)
 );
 
@@ -302,7 +302,7 @@ dual_ram_data # (
     .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
     .porta_en       (modulus_portb_en),
     .data_o_addr    (modulus_portb_addr),
-    .data_o         (modulus_portb_data),
+    .data_o         (),
     .data_ram_busy  (modulus_portb_busy)
 );
 

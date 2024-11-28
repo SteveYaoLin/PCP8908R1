@@ -42,10 +42,10 @@ module BUS #(parameter _DUAL_WIDTH = 12)
   input   modulus_portb_busy,
   output  modulus_portb_en  ,
 
-  input  [15:0]     phase_porta_data,
-  input  [15:0]     phase_portb_data,
-  input  [15:0]     modulus_porta_data,
-  input  [15:0]     modulus_portb_data,
+  // input  [15:0]     phase_porta_data,
+  // input  [15:0]     phase_portb_data,
+  // input  [15:0]     modulus_porta_data,
+  // input  [15:0]     modulus_portb_data,
 
   output bus_wait 
 
