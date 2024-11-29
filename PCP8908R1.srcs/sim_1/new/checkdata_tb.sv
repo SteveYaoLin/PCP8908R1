@@ -37,7 +37,7 @@
 `define  ADCB_FIFO_READ         `ADCB.rd_en
 `define  ADCB_FIFO_READ_DATA    `ADCB.fifo_data
 
-parameter _FIFO_DEPTH = 16384;
+parameter _FIFO_DEPTH = 32768;
 parameter _FRE_SAMPLE = 65;
 parameter _FREVIN = 13.56;
 // parameter _COUNTER_WIDTH = 14;

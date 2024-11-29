@@ -2,7 +2,7 @@
 module sys_top # (
     // parameter _COUNTER_WIDTH = 14,
     parameter _DATA_WIDTH = 14,
-    parameter _FIFO_DEPTH = 16384,
+    parameter _FIFO_DEPTH = 32768,
     parameter _DUAL_WIDTH = 12
 )
 (
@@ -475,7 +475,7 @@ breath_led u_breath_led(
 // `ifdef SIM
 // parameter _CNT = 200; // 测试时使用较小的值
 // `else
-parameter _CNT = 70000; // 默认值
+parameter _CNT = 130000; // 默认值
 // `endif
 
 reg [31:0] temp_cnt ;

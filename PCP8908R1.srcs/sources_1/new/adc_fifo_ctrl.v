@@ -60,8 +60,8 @@ module adc_fifo_ctrl#(
     reg fifo_enbale_d0;
     reg fifo_enbale_d1;
 
-    reg [14:0] fifo_wr_cnt;
-    reg [14:0] fifo_rd_cnt;
+    reg [_COUNTER_WIDTH:0] fifo_wr_cnt;
+    reg [_COUNTER_WIDTH:0] fifo_rd_cnt;
     wire rd_ready ;
     reg rd_ready_d1 ;
     reg rd_begin ;
@@ -106,7 +106,7 @@ always @(posedge adc_clk or negedge rst) begin
 end
 always @(posedge adc_clk or negedge rst) begin
     if(rst == 1'b0) begin
-        fifo_wr_cnt <= 15'd0;
+        fifo_wr_cnt <= 'd0;
     end
     else if (fifo_enbale_d0 & ~fifo_enbale_d1) begin
         fifo_wr_cnt <= fifo_wr_cnt + 1'b1;
@@ -115,15 +115,15 @@ always @(posedge adc_clk or negedge rst) begin
         fifo_wr_cnt <= fifo_wr_cnt + 1'b1;
     end
     else  begin 
-        fifo_wr_cnt <= 15'd0;
+        fifo_wr_cnt <= 'd0;
     end
     
 end
 assign wr_en = (|fifo_wr_cnt)? 1'b1 : 1'b0; //wr_en is H during 1-_FIFO_DEPTH
 
 //create rd and counter signal
-assign rd_ready = (fifo_wr_cnt == 15'h2cc0) ? 1'b1 : 1'b0;
-// assign rd_ready = (fifo_wr_cnt == 15'h00d7) ? 1'b1 : 1'b0;
+// assign rd_ready = (fifo_wr_cnt == 15'h2cc0) ? 1'b1 : 1'b0;
+assign rd_ready = (fifo_wr_cnt == 15'h5000) ? 1'b1 : 1'b0;
 
 //rd_ready  clock sync
 always @(posedge sys_clk or negedge rst) begin
@@ -141,7 +141,7 @@ end
 
 always @(posedge sys_clk or negedge rst) begin
     if(rst == 1'b0) begin
-        fifo_rd_cnt <= 15'd0;
+        fifo_rd_cnt <= 'd0;
     end
     else if (rd_begin) begin
         fifo_rd_cnt <= fifo_rd_cnt + 1'b1;
@@ -153,7 +153,7 @@ always @(posedge sys_clk or negedge rst) begin
         fifo_rd_cnt <= fifo_rd_cnt ;
     end
     else  begin 
-        fifo_rd_cnt <= 15'd0;
+        fifo_rd_cnt <= 'd0;
     end
     
 end
