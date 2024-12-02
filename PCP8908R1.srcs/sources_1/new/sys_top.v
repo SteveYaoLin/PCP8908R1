@@ -126,10 +126,22 @@ module sys_top # (
     // wire [_DATA_WIDTH:0] modulus_portb_data;
 
     reg temp_valid;
-    
+    wire test_ila;
+    wire [4:0] FFT_NFFT;
+    wire FWD_INV;
+    wire CP_LEN;
 
     //assign BUS_BE = 4'b1111;
+//always@(*)begin
+//    case (_FIFO_DEPTH)
+//        32768: FFT_NFFT = 5'h0F;
+//        16384: FFT_NFFT = 5'h0e;
+//        65536: FFT_NFFT = 5'h10;
+//        default :FFT_NFFT = 5'h0e;
+//    endcase
+//end
 
+assign FFT_NFFT = 5'h0F;
     assign rst_n =  sys_rst_n && locked; 
     assign ad_shdna =1'b0;// module_control[0];
     assign ad_shdnb =1'b0;// module_control[1];
@@ -194,7 +206,7 @@ BUS u_bus(
 
     .module_status1( data_modulus_porta ),
     .module_status2( data_phase_porta ),
-    .module_status3( {polarity,phase_diff} ),
+    .module_status3( {test_ila,phase_diff} ),
     .module_status4( data_phase_portb ),
     .cnt_limit_down(cnt_limit_down),
     .store_cnt(store_cnt),
@@ -328,21 +340,21 @@ adc_data_sync #(
     .adc_data(ad_portb_data),
     .sync_data(sync_portb_data)
 );
-// ila_0 ila_0(
-// .clk	(clk_130m),
-// .probe0	(fifo_data_porta),
-// .probe1	(fifo_data_portb),
-// .probe2	(modulus_portb_cnt),
-// .probe3	(phase_portb_cnt),
-// .probe4	(data_phase_portb),
-// .probe5	(data_modulus_porta),
-// .probe6	(data_phase_porta),
-// .probe7	(modulus_porta_cnt),
-// .probe8	({polarity,phase_diff}),
-// .probe9	(phase_porta_cnt),
-// .probe10(data_modulus_portb),
-// .probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,ad_ofa,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,ad_ofb,data_valid_portb,phase_valid_porta})
-// );
+ila_0 ila_0(
+.clk	(clk_130m),
+.probe0	(fifo_data_porta),
+.probe1	(fifo_data_portb),
+.probe2	(modulus_portb_cnt),
+.probe3	(phase_portb_cnt),
+.probe4	(data_phase_portb),
+.probe5	(data_modulus_porta),
+.probe6	(data_phase_porta),
+.probe7	(modulus_porta_cnt),
+.probe8	({test_ila,phase_diff}),
+.probe9	(phase_porta_cnt),
+.probe10(data_modulus_portb),
+.probe11({temp_valid,fifo_adc_porta_last,fifo_adc_porta_sync,s_axis_data_tready_porta,m_axis_data_tlast_porta,m_axis_data_tvalid_porta,ad_ofa,data_valid_porta,fifo_adc_portb_last,fifo_adc_portb_sync,s_axis_data_tready_portb,m_axis_data_tlast_portb,m_axis_data_tvalid_portb,ad_ofb,data_valid_portb,phase_valid_porta})
+);
 
 adc_fifo_ctrl  # (
     ._COUNTER_WIDTH(_COUNTER_WIDTH),
@@ -385,7 +397,7 @@ adc_fifo_ctrl  # (
  (
      .aclk(clk_130m),                             //sample clock，130m时钟               
      .aresetn(rst_n),                             //复位信号，低电平有效  
-     .s_axis_config_tdata(8'b1),      //配置通道的输入数据，1：fft   0：ifft
+     .s_axis_config_tdata({3'b0,FFT_NFFT}),      //配置通道的输入数据，1：fft   0：ifft
      .s_axis_config_tvalid(1'b1),    //配置通道的输入数据有效使能
      .s_axis_config_tready(),    //外部模块准备接收配置通道数据
 
@@ -427,7 +439,7 @@ adc_fifo_ctrl  # (
   (
      .aclk(clk_130m),                             //sample clock，130m时钟               
      .aresetn(rst_n),                             //复位信号，低电平有效  
-     .s_axis_config_tdata(8'b1),      //配置通道的输入数据，1：fft   0：ifft
+     .s_axis_config_tdata({3'b0,FFT_NFFT}),      //配置通道的输入数据，1：fft   0：ifft
      .s_axis_config_tvalid(1'b1),    //配置通道的输入数据有效使能
      .s_axis_config_tready(),    //外部模块准备接收配置通道数据
 
@@ -465,7 +477,7 @@ adc_fifo_ctrl  # (
 // assign s_axis_data_tready_porta = 1'b1;
 // assign s_axis_data_tready_portb = 1'b1;
 //test creat enable signal
-
+assign test_ila = (|phase_portb_cnt) ? 1'b1:1'b0;
 breath_led u_breath_led(
     .sys_clk       (clk_65m) ,      //系统时锟斤拷 50MHz
     .sys_rst_n       (rst_n) ,    //系统锟斤拷位锟斤拷锟酵碉拷平锟斤拷效

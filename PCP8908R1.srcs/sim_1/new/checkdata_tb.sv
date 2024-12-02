@@ -36,12 +36,17 @@
 `define  ADCB_FIFO_BEGIN        `ADCB.fifo_enbale
 `define  ADCB_FIFO_READ         `ADCB.rd_en
 `define  ADCB_FIFO_READ_DATA    `ADCB.fifo_data
+`define  ADCA_MODULUS_CNT       checkdata_tb.uut.modulus_porta_cnt
+`define  ADCB_MODULUS_CNT       checkdata_tb.uut.modulus_portb_cnt
+`define  ADCA_MODULUS       checkdata_tb.uut.data_modulus_porta
+`define  ADCB_MODULUS       checkdata_tb.uut.data_modulus_portb
 
 parameter _FIFO_DEPTH = 32768;
 parameter _FRE_SAMPLE = 65;
 parameter _FREVIN = 13.56;
 // parameter _COUNTER_WIDTH = 14;
 parameter _DATA_WIDTH = 14;
+parameter _FRE_NUM = $rtoi(_FREVIN / _FRE_SAMPLE * _FIFO_DEPTH);
 
 module checkdata_tb;
 
@@ -137,6 +142,17 @@ module checkdata_tb;
       increace_data <= 0;
     end
 
+  end
+
+  always @(posedge `SYS_CLOCK or negedge sys_rst_n) begin
+    case (`ADCA_MODULUS_CNT)
+        _FRE_NUM-1: $display("ADCA_MODULUS -1 = 0x%x", `ADCA_MODULUS);
+        _FRE_NUM  : $display("ADCA_MODULUS    = 0x%x at %x", `ADCA_MODULUS,`ADCA_MODULUS_CNT);
+        _FRE_NUM+1: $display("ADCA_MODULUS +1 = 0x%x ", `ADCA_MODULUS);
+        _FRE_NUM+2: $display("ADCA_MODULUS +2 = 0x%x", `ADCA_MODULUS);
+        // default : $display("ADCA_MODULUS     = 0x%x", ADCA_MODULUS);
+        // end
+    endcase
   end
   //checkout ADCB FIFO READ DATA
     // initial begin
