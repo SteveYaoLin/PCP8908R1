@@ -179,11 +179,16 @@ module checkdata_tb;
   real sine_wave_real;
   real cos_wave_real;
   integer i;
-  reg [13:0] sine_wave;
-  reg [13:0] cos_wave;
+  logic  [13:0] sine_wave;
+  logic [13:0] cos_wave;
+  logic [13:0] sine_twos_wave;
+  logic [13:0] cos_twos_wave;
+  reg sign_sin;
+  reg sign_cos;
   real amplitude = 14'h1FFF;  
 
   initial begin
+    #1000;
     for (i = 0; i < _FIFO_DEPTH ; i = i + 1) begin  // Generate 10 sine wave cycles for demonstration
       @(posedge ad_porta_clk);
       sine_wave_real = (amplitude+1) + amplitude * $sin(2 * 3.14159 * i / (_FRE_SAMPLE / _FREVIN)); 
@@ -192,7 +197,10 @@ module checkdata_tb;
       // wave = A + A*$sin(2*pi/_FRE_SAMPLE*_FREVIN*t + w1 )
       sine_wave = sine_wave_real; 
       cos_wave = cos_wave_real;
-      ad_porta_data = sine_wave;  
+              // 调用任务将二进制数据转换为补码
+        bin_to_twos_complement(sine_wave, sine_twos_wave, sign_sin);
+        bin_to_twos_complement(cos_wave, cos_twos_wave, sign_cos);
+      ad_porta_data = sine_twos_wave ;//sine_wave;  
       ad_portb_data = cos_wave;
         if (i == (_FIFO_DEPTH - 1)) begin
             i=0;
@@ -325,6 +333,25 @@ module checkdata_tb;
   // $finish;
     
   end
+
+task bin_to_twos_complement;
+    input  [13:0] bin_data;     // 输入：14位二进制数据
+    output [13:0] twos_data;    // 输出：14位补码数据
+    output sign;                // 输出：符号位，0为正，1为负
+
+    begin
+        // 判断输入的范围，计算补码和符号位
+        if (bin_data[13] == 1'b1) begin
+            // 负数：将符号位置为1，并计算补码
+            sign = 1'b1;
+            twos_data = ~bin_data + 14'b1;
+        end else begin
+            // 正数：直接输出，符号位为0
+            sign = 1'b0;
+            twos_data = bin_data;
+        end
+    end
+endtask
 
 
 endmodule
