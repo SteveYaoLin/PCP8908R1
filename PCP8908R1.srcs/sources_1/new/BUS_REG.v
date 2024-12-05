@@ -56,12 +56,7 @@ parameter _RD_DELAY = 4'd1;
 wire addr_0002_catch ;
 wire rdn ;
 wire wrn ;
-  // wire C ;
-  // wire R ;
-  // wire W ; 
-  // wire [1:0]BE ;
-  // wire [15:0] A ;
-  // wire [15:0] D ;
+
   reg  [15:0] DATA_RD;
   wire [15:0] ADDR_RD;
   wire [15:0] ADDR_WR;
@@ -79,8 +74,7 @@ wire wrn ;
   reg [3:0] rd_delay_cnt;
   wire rd_delay_assecced;
 
-  // reg [15:0] cnt_limit_down ;
-  // reg [15:0] store_cnt      ;
+
   
 assign ADDR_RD = address_reg & {16{~rdn}} & {16{~io_cs}};
 assign ADDR_WR = address_reg & {16{~wrn}} & {16{~io_cs}};
@@ -92,12 +86,7 @@ assign  wrn = io_cs | wr_delay_assecced | io_wr;
 
 assign bus_wait = phase_porta_busy | phase_portb_busy | modulus_porta_busy | modulus_portb_busy;
 
-  // assign BE = io_be;
-  // assign A = address_reg;
-  // assign D = io_data;
-  // assign C = io_clk;
-  // assign R = rst_n;
-  // assign W = ~(wrn|io_cs); 
+
 
   assign ADDR_RD_test = address_reg & {16{~rdn}} & {16{~io_cs}};
   assign ADDR_WR_test = address_reg & {16{~wrn}} & {16{~io_cs}};
@@ -187,24 +176,7 @@ always@(posedge io_clk or negedge rst_n)
     'h000e : DATA_RD = module_test;
     'h0010 : DATA_RD = cnt_limit_down;
     'h0012 : DATA_RD = store_cnt;
-    
 
-    // 'h0100 : DATA_RD = test_reg[16*0 +:16];
-    // 'h0104 : DATA_RD = test_reg[16*1 +:16];
-    // 'h0108 : DATA_RD = test_reg[16*2 +:16];
-    // 'h010c : DATA_RD = test_reg[16*3 +:16];
-    // 'h0110 : DATA_RD = test_reg[16*4 +:16];
-    // 'h0114 : DATA_RD = test_reg[16*5 +:16];
-    // 'h0118 : DATA_RD = test_reg[16*6 +:16];
-    // 'h011c : DATA_RD = test_reg[16*7 +:16];
-    // 'h0120 : DATA_RD = test_reg[16*8 +:16];
-    // 'h0124 : DATA_RD = test_reg[16*9 +:16];
-    // 'h0128 : DATA_RD = test_reg[16*10+:16];
-    // 'h012c : DATA_RD = test_reg[16*11+:16];
-    // 'h0130 : DATA_RD = test_reg[16*12+:16];
-    // 'h0134 : DATA_RD = test_reg[16*13+:16];
-    // 'h0138 : DATA_RD = test_reg[16*14+:16];
-    // 'h013c : DATA_RD = test_reg[16*15+:16];
 
     default : DATA_RD = 32'h0;
     endcase
@@ -273,45 +245,7 @@ always@(posedge io_clk or negedge rst_n)
   // assign  modulus_portb_addr      ;
   assign  modulus_portb_en =  ((address_dual_ram[15:_DUAL_WIDTH] == 4'h3)&rdn) ? 1'b1 : 1'b0        ;
 
-//reg write
-// bus_write #('h0002,'d2) 
-//   X0002 
-//     (
-//     .io_rst(R)        ,
-//     .io_clk(C)        ,
-//     .io_wr(W                ),
-//     .addrCatch(addr_0002_catch  ),
-//     .io_wen(BE),
-//     .io_addr(ADDR_WR       ),
-//     .io_data(D                ),
-//     .io_dout(module_control)
-//     );
 
-// bus_write #(16'h000e) X000E (
-//   .rst_n(rst_n),
-//   .io_clk(io_clk),
-//   .io_wr(wrn),
-//   .io_addr(address_reg),
-//   .io_data(io_data),
-//   .io_dout(module_test)
-//   );
-
-// bus_write #('h0100) X0100 (R,C,wrn,ADDR_WR,D,test_reg[16*0 +:16]);
-// bus_write #('h0104) X0104 (R,C,wrn,ADDR_WR,D,test_reg[16*1 +:16]);
-// bus_write #('h0108) X0108 (R,C,wrn,ADDR_WR,D,test_reg[16*2 +:16]);
-// bus_write #('h010c) X010c (R,C,wrn,ADDR_WR,D,test_reg[16*3 +:16]);
-// bus_write #('h0110) X0110 (R,C,wrn,ADDR_WR,D,test_reg[16*4 +:16]);
-// bus_write #('h0114) X0114 (R,C,wrn,ADDR_WR,D,test_reg[16*5 +:16]);
-// bus_write #('h0118) X0118 (R,C,wrn,ADDR_WR,D,test_reg[16*6 +:16]);
-// bus_write #('h011c) X011c (R,C,wrn,ADDR_WR,D,test_reg[16*7 +:16]);
-// bus_write #('h0120) X0120 (R,C,wrn,ADDR_WR,D,test_reg[16*8 +:16]);
-// bus_write #('h0124) X0124 (R,C,wrn,ADDR_WR,D,test_reg[16*9 +:16]);
-// bus_write #('h0128) X0128 (R,C,wrn,ADDR_WR,D,test_reg[16*10+:16]);
-// bus_write #('h012c) X012c (R,C,wrn,ADDR_WR,D,test_reg[16*11+:16]);
-// bus_write #('h0130) X0130 (R,C,wrn,ADDR_WR,D,test_reg[16*12+:16]);
-// bus_write #('h0134) X0134 (R,C,wrn,ADDR_WR,D,test_reg[16*13+:16]);
-// bus_write #('h0138) X0138 (R,C,wrn,ADDR_WR,D,test_reg[16*14+:16]);
-// bus_write #('h013c) X013c (R,C,wrn,ADDR_WR,D,test_reg[16*15+:16]);
 
 //  ila_0 ila_0
 //  (

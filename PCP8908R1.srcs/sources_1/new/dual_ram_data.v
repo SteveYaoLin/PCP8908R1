@@ -7,8 +7,8 @@ module dual_ram_data # (
     input rst_n,
     input [_DATA_WIDTH:0] data_in,
     input [_COUNTER_WIDTH - 1:0] data_cnt,
-    input [_COUNTER_WIDTH - 1:0] cnt_limit_up,          // save the phase counter value
-    input [_COUNTER_WIDTH - 1:0] cnt_limit_down,    // which is from No.N of phase
+    input [_COUNTER_WIDTH - 1:0] cnt_limit_up,          
+    input [_COUNTER_WIDTH - 1:0] cnt_limit_down,    
 //dual RAM
     input porta_en,
     input [_DUAL_WIDTH - 1 :0] data_o_addr,

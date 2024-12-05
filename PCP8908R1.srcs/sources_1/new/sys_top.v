@@ -1,48 +1,48 @@
 `timescale 1ns / 1ps
 module sys_top # (
-    // parameter _COUNTER_WIDTH = 14,
+    
     parameter _DATA_WIDTH = 14,
     parameter _FIFO_DEPTH = 32768,
     parameter _DUAL_WIDTH = 12
 )
 (
-    input                 sys_clk     	,  //时钟信号
-    input                 sys_rst_n   	,  //复位信号
-    output                 led   		,  //按键信号
-    //STM32H7的FMC接口
-    inout     [15:0]       fmc_adda_data     ,  //FMC的ADDA数据
-    input     fmc_clk     ,  //FMC的ADDA时钟
-    input     fmc_nl        ,  //低电平有效的FMC总线忙闲信号
-    output    fmc_nwait     ,  //低电平有效的FMC总线等待信号
-    input    fmc_nwe       ,  //低电平有效的FMC总线写使能信号
-    input    fmc_ncs       ,  //低电平有效的FMC总线片选信号
-    input    fmc_noe       ,  //低电平有效的FMC总线读使能信号
-    output    fmc_int       ,  //MCU的中断信号
-    output    mcu_int       ,  //MCU的中断信号
-    //AD转换模块的接口
-    input     [_DATA_WIDTH - 1:0]       ad_porta_data    	,  //AD转换模块的数据
-    input     [_DATA_WIDTH - 1:0]       ad_portb_data    	,  //AD转换模块的数据
+    input                 sys_clk     	,  
+    input                 sys_rst_n   	,  
+    output                 led   		,  
+    
+    inout     [15:0]       fmc_adda_data     ,  
+    input     fmc_clk     ,  
+    input     fmc_nl        , 
+    output    fmc_nwait     , 
+    input    fmc_nwe       ,  
+    input    fmc_ncs       ,  
+    input    fmc_noe       ,  
+    output    fmc_int       , 
+    output    mcu_int       , 
    
-    input                 ad_ofa      	,  //AD转换模块的使能信号
+    input     [_DATA_WIDTH - 1:0]       ad_porta_data    	,  
+    input     [_DATA_WIDTH - 1:0]       ad_portb_data    	,  
+   
+    input                 ad_ofa      	,  
     output                ad_shdna      	,
     output                ad_porta_oen      	,
-    output                ad_porta_clk      	,  //AD转换模块的时钟
+    output                ad_porta_clk      	,  
 
-    //AD转换模块的接口
-    input                 ad_ofb      	,  //AD转换模块的使能信号
+    
+    input                 ad_ofb      	, 
     output                ad_shdnb      	,
     output                ad_portb_oen      	,
-    output                ad_portb_clk      	  //AD转换模块的时钟
+    output                ad_portb_clk      	  
 
     );
     parameter _COUNTER_WIDTH = $clog2(_FIFO_DEPTH);
-    //信号定义
-    wire        clk_65m;            //65MHz时钟
-    wire        clk_130m;            //100MHz时钟
-    wire        clkA_65m;             //65MHz时钟
-    wire        clkB_65m;             //65MHz时钟
-    wire        locked;              //PLL锁定信号
-    wire        rst_n;               //系统复位信号
+    
+    wire        clk_65m;            
+    wire        clk_130m;           
+    wire        clkA_65m;           
+    wire        clkB_65m;           
+    wire        locked;             
+    wire        rst_n;              
     wire  [15:0] BUS_ADDR;
 //   wire  [3:0]  BUS_BE；
     wire  [15:0] BUS_DATA_WR;
@@ -53,10 +53,10 @@ module sys_top # (
     reg adc_portb_en  = 1'b0;
     
     //
-    wire  [_DATA_WIDTH - 1:0]       sync_porta_data    	;  //AD转换模块的数据
-    wire  [_DATA_WIDTH - 1:0]       sync_portb_data    	;  //AD转换模块的数据
-    wire  [_DATA_WIDTH - 1:0]       fifo_data_porta    	;  //AD转换模块的数据
-    wire  [_DATA_WIDTH - 1:0]       fifo_data_portb    	;  //AD转换模块的数据
+    wire  [_DATA_WIDTH - 1:0]       sync_porta_data    	;  
+    wire  [_DATA_WIDTH - 1:0]       sync_portb_data    	;  
+    wire  [_DATA_WIDTH - 1:0]       fifo_data_porta    	;  
+    wire  [_DATA_WIDTH - 1:0]       fifo_data_portb    	;  
 
     wire  [15:0]       module_status;
     wire  [15:0]       module_control;
@@ -74,23 +74,22 @@ module sys_top # (
     wire m_axis_data_tlast_porta;
     wire s_axis_data_tready_porta;
 
-    // wire [31:0]m_axis_data_tdata_portb;
-    // wire [23:0]m_axis_data_tuser_portb;
+
     wire m_axis_data_tvalid_portb;
     wire m_axis_data_tlast_portab;
     wire s_axis_data_tready_portb;
 
-    wire  [15:0]    data_modulus_porta  ;  // 取模后的数据
-    wire            data_eop_porta      ;      // 取模后输出的终止信号
-    wire            data_valid_porta    ;    // 取模后的数据有效信号
-    wire  [_DATA_WIDTH:0]    data_phase_porta    ;    // 取相位后的数据
-    wire            phase_valid_porta   ;    // 取相位后的数据有效信号
+    wire  [15:0]    data_modulus_porta  ;  
+    wire            data_eop_porta      ;      
+    wire            data_valid_porta    ;    
+    wire  [_DATA_WIDTH:0]    data_phase_porta    ;    
+    wire            phase_valid_porta   ;    
 
-    wire  [15:0]    data_modulus_portb  ;  // 取模后的数据
-    wire            data_eop_portb      ;      // 取模后输出的终止信号
-    wire            data_valid_portb    ;    // 取模后的数据有效信号
-    wire  [_DATA_WIDTH:0]    data_phase_portb    ;    // 取相位后的数据
-    wire            phase_valid_portb   ;    // 取相位后的数据有效信号
+    wire  [15:0]    data_modulus_portb  ;  
+    wire            data_eop_portb      ;  
+    wire            data_valid_portb    ;  
+    wire  [_DATA_WIDTH:0]    data_phase_portb    ;    
+    wire            phase_valid_portb   ;    
 
     wire [_COUNTER_WIDTH - 1 :0] modulus_porta_cnt;
     wire [_COUNTER_WIDTH - 1 :0] phase_porta_cnt;
@@ -131,59 +130,28 @@ module sys_top # (
     wire FWD_INV;
     wire CP_LEN;
 
-    //assign BUS_BE = 4'b1111;
-//always@(*)begin
-//    case (_FIFO_DEPTH)
-//        32768: FFT_NFFT = 5'h0F;
-//        16384: FFT_NFFT = 5'h0e;
-//        65536: FFT_NFFT = 5'h10;
-//        default :FFT_NFFT = 5'h0e;
-//    endcase
-//end
 
-assign FFT_NFFT = 5'h0F;
+
+    assign FFT_NFFT = 5'h0F;
     assign rst_n =  sys_rst_n && locked; 
     assign ad_shdna =1'b0;// module_control[0];
     assign ad_shdnb =1'b0;// module_control[1];
     assign ad_porta_oen = 1'b0;
     assign ad_portb_oen = 1'b0;
-    // assign fmc_nwait =  1'b1; 
 
     //PLL模块
     clk_wiz_0 u_pll
     (
-    //时钟输出
     .clk_out1(clk_130m),
     .clk_out2(clk_65m),
     .clk_out3(clkA_65m),
     .clk_out4(clkB_65m),
-//    .clk_out4(clk_130m),
-    //状态和控制信号               
     .resetn(sys_rst_n), 
     .locked(locked),
-    //时钟输入
+    
     .clk_in1(sys_clk)
     );
   
-    //instance bus bridge
-// fsmc_bridge u_fsmc_bridge(
-// 	.sys_clk(clk_65m),
-// 	.rst_n(rst_n),
-	
-// 	//fsmc总线相关信号
-// 	.fsmc_nadv(fmc_nl),
-// 	.fsmc_wr(fmc_nwe),
-// 	.fsmc_rd(fmc_noe),
-// 	.fsmc_cs(fmc_ncs),
-// 	.fsmc_db(fmc_adda_data),
-
-// 	//外部接口
-// 	//.BUS_CLK(BUS_CLK),
-// 	.BUS_ADDR(BUS_ADDR),
-// 	//.BUS_BE(BUS_BE),
-// 	.BUS_DATA_WR(BUS_DATA_WR),
-// 	.BUS_DATA_RD(BUS_DATA_RD)
-// );
 
 BUS u_bus(
     .io_clk(clk_65m),
@@ -235,13 +203,9 @@ phase_difference # (
 ) u_phase_difference (
     .clk(clk_130m),
     .rst_n(rst_n),
-`ifdef SIM   
-    .cnt_limit_up(16383),
-    .cnt_limit_down(0),
-`else
     .cnt_limit_up(store_cnt + cnt_limit_down),
     .cnt_limit_down(cnt_limit_down),
-`endif
+
     .data_phase_porta(data_phase_porta),
     .phase_porta_cnt(phase_porta_cnt),
     .data_phase_portb(data_phase_portb),
@@ -259,8 +223,8 @@ dual_ram_data # (
     .rst_n(rst_n),
     .data_in        (data_phase_porta),
     .data_cnt       (phase_porta_cnt),
-    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
-    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          
+    .cnt_limit_down (cnt_limit_down),                      
     .porta_en       (phase_porta_en),
     .data_o_addr    (phase_porta_addr),
     .data_o         (),
@@ -276,8 +240,8 @@ dual_ram_data # (
     .rst_n(rst_n),
     .data_in        (data_phase_portb),
     .data_cnt       (phase_portb_cnt),
-    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
-    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          
+    .cnt_limit_down (cnt_limit_down),                      
     .porta_en       (phase_portb_en),
     .data_o_addr    (phase_portb_addr),
     .data_o         (),
@@ -293,8 +257,8 @@ dual_ram_data # (
     .rst_n(rst_n),
     .data_in        (data_modulus_porta),
     .data_cnt       (modulus_porta_cnt),
-    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
-    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          
+    .cnt_limit_down (cnt_limit_down),                      
     .porta_en       (modulus_porta_en),
     .data_o_addr    (modulus_porta_addr),
     .data_o         (),
@@ -310,8 +274,8 @@ dual_ram_data # (
     .rst_n(rst_n),
     .data_in        (data_modulus_portb),
     .data_cnt       (modulus_portb_cnt),
-    .cnt_limit_up   (store_cnt + cnt_limit_down),          // save the phase counter value
-    .cnt_limit_down (cnt_limit_down),                       // which is from No.N of phase
+    .cnt_limit_up   (store_cnt + cnt_limit_down),          
+    .cnt_limit_down (cnt_limit_down),                      
     .porta_en       (modulus_portb_en),
     .data_o_addr    (modulus_portb_addr),
     .data_o         (),
@@ -395,22 +359,22 @@ adc_fifo_ctrl  # (
     ._FIFO_DEPTH(_FIFO_DEPTH)
 ) u0_fft_ctrl
  (
-     .aclk(clk_130m),                             //sample clock，130m时钟               
-     .aresetn(rst_n),                             //复位信号，低电平有效  
-     .s_axis_config_tdata({3'b0,FFT_NFFT}),      //配置通道的输入数据，1：fft   0：ifft
-     .s_axis_config_tvalid(1'b1),    //配置通道的输入数据有效使能
-     .s_axis_config_tready(),    //外部模块准备接收配置通道数据
+     .aclk(clk_130m),                                            
+     .aresetn(rst_n),                               
+     .s_axis_config_tdata({3'b0,FFT_NFFT}),      
+     .s_axis_config_tvalid(1'b1),    
+     .s_axis_config_tready(),    
 
-     .s_axis_data_tdata({18'h0,fifo_data_porta}),            //输入数据
-     .s_axis_data_tvalid(fifo_adc_porta_sync),            //输入数据有效使能
-     .s_axis_data_tready(s_axis_data_tready_porta),            //外部模块准备接收输入数据
-     .s_axis_data_tlast(fifo_adc_porta_last),              //输入数据的最后一个数据
+     .s_axis_data_tdata({18'h0,fifo_data_porta}),         
+     .s_axis_data_tvalid(fifo_adc_porta_sync),            
+     .s_axis_data_tready(s_axis_data_tready_porta),       
+     .s_axis_data_tlast(fifo_adc_porta_last),             
 
-     .m_axis_data_tdata(m_axis_data_tdata_porta),              //输出数据
-     .m_axis_data_tuser(m_axis_data_tuser_porta),              //输出数据的user信号
-     .m_axis_data_tvalid(m_axis_data_tvalid_porta),            //输出数据有效使能
-     .m_axis_data_tready(1'b1),            //外部模块准备接收输出数据
-     .m_axis_data_tlast(m_axis_data_tlast_porta) ,             //输出数据的最后一个数据
+     .m_axis_data_tdata(m_axis_data_tdata_porta),         
+     .m_axis_data_tuser(m_axis_data_tuser_porta),         
+     .m_axis_data_tvalid(m_axis_data_tvalid_porta),       
+     .m_axis_data_tready(1'b1),            
+     .m_axis_data_tlast(m_axis_data_tlast_porta) ,        
 
      .m_axis_status_tdata(),
      .m_axis_status_tvalid(),
@@ -437,22 +401,22 @@ adc_fifo_ctrl  # (
     ._FIFO_DEPTH(_FIFO_DEPTH)
 ) u1_fft_ctrl
   (
-     .aclk(clk_130m),                             //sample clock，130m时钟               
-     .aresetn(rst_n),                             //复位信号，低电平有效  
-     .s_axis_config_tdata({3'b0,FFT_NFFT}),      //配置通道的输入数据，1：fft   0：ifft
-     .s_axis_config_tvalid(1'b1),    //配置通道的输入数据有效使能
-     .s_axis_config_tready(),    //外部模块准备接收配置通道数据
+     .aclk(clk_130m),                             
+     .aresetn(rst_n),                            
+     .s_axis_config_tdata({3'b0,FFT_NFFT}),      
+     .s_axis_config_tvalid(1'b1),    
+     .s_axis_config_tready(),    
 
-     .s_axis_data_tdata({18'h0,fifo_data_portb}),            //输入数据
-     .s_axis_data_tvalid(fifo_adc_portb_sync),            //输入数据有效使能
-     .s_axis_data_tready(s_axis_data_tready_portb),            //外部模块准备接收输入数据
-     .s_axis_data_tlast(fifo_adc_portb_last),              //输入数据的最后一个数据
+     .s_axis_data_tdata({18'h0,fifo_data_portb}),         
+     .s_axis_data_tvalid(fifo_adc_portb_sync),            
+     .s_axis_data_tready(s_axis_data_tready_portb),       
+     .s_axis_data_tlast(fifo_adc_portb_last),             
 
-     .m_axis_data_tdata(m_axis_data_tdata_portb),              //输出数据
-     .m_axis_data_tuser(m_axis_data_tuser_portb),              //输出数据的user信号
-     .m_axis_data_tvalid(m_axis_data_tvalid_portb),            //输出数据有效使能
-     .m_axis_data_tready(1'b1),            //外部模块准备接收输出数据
-     .m_axis_data_tlast(m_axis_data_tlast_portb)  ,            //输出数据的最后一个数据
+     .m_axis_data_tdata(m_axis_data_tdata_portb),         
+     .m_axis_data_tuser(m_axis_data_tuser_portb),         
+     .m_axis_data_tvalid(m_axis_data_tvalid_portb),            
+     .m_axis_data_tready(1'b1),            
+     .m_axis_data_tlast(m_axis_data_tlast_portb)  ,            
 
      .m_axis_status_tdata(),
      .m_axis_status_tvalid(),
@@ -472,23 +436,17 @@ adc_fifo_ctrl  # (
      .phase_valid(phase_valid_portb)
  );
 
-// compile
-//assign  BUS_DATA_RD = ad_porta_data;
-// assign s_axis_data_tready_porta = 1'b1;
-// assign s_axis_data_tready_portb = 1'b1;
-//test creat enable signal
+
 assign test_ila = (|phase_portb_cnt) ? 1'b1:1'b0;
 breath_led u_breath_led(
-    .sys_clk       (clk_65m) ,      //系统时锟斤拷 50MHz
-    .sys_rst_n       (rst_n) ,    //系统锟斤拷位锟斤拷锟酵碉拷平锟斤拷效
-    .led (led )           //LED锟斤拷
+    .sys_clk       (clk_65m) ,      
+    .sys_rst_n       (rst_n) ,    
+    .led (led )           
 );
 
-// `ifdef SIM
-// parameter _CNT = 200; // 测试时使用较小的值
-// `else
+
 parameter _CNT = 130000; // 默认值
-// `endif
+
 
 reg [31:0] temp_cnt ;
 always @(posedge clk_65m or negedge rst_n) begin

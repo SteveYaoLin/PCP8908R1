@@ -1,36 +1,33 @@
 
 `timescale 1 ns / 1 ps
 
-/****************************************************************/
+
 module fsmc_bridge(
 	input sys_clk,
 	input rst_n,
 	
-	//fsmc��������ź�??
-
 	input fsmc_nadv,
 	input fsmc_wr,
 	input fsmc_rd,
 	input fsmc_cs,
 	inout [15:0]fsmc_db ,
 
-	//�ⲿ�ӿ�
-	// output  [0:0]  BUS_CLK,
+
  	output  [15:0] BUS_ADDR,
- 	// output  [3:0]  BUS_BE,
+
  	output  [15:0] BUS_DATA_WR,
  	input [15:0] BUS_DATA_RD
 ); 
 
-/****************************************************************/
-//wr��rd�ź���ȡ
+
+
 wire rdn ;
 wire wrn ;
 
 assign  rdn = fsmc_cs | fsmc_rd;
 assign  wrn = fsmc_cs | fsmc_wr;
 
-/****************************************************************/
+
 reg [15:0]address_reg;
 always@(posedge sys_clk or negedge rst_n)
 	begin
@@ -48,7 +45,7 @@ always@(posedge sys_clk or negedge rst_n)
 assign BUS_ADDR = address_reg;
 assign BUS_DATA_WR = wrn ? fsmc_db : 16'hzzzz;
 assign fsmc_db = rdn ?  BUS_DATA_RD : 16'hzzzz;
-/****************************************************************/
+
 
 //ila_0 ila_0(
 //.clk	(sys_clk),
