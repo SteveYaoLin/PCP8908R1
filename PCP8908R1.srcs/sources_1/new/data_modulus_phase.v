@@ -9,8 +9,8 @@ module data_modulus_phase # (
     input             rst_n,
     input             aclken,
     
-    input   [_DATA_WIDTH:0]     source_real,   
-    input   [_DATA_WIDTH:0]     source_imag,   
+    input   [_DATA_WIDTH-1:0]     source_real,   
+    input   [_DATA_WIDTH-1:0]     source_imag,   
     input             source_eop,    
     input             source_valid,  
     
@@ -26,9 +26,9 @@ module data_modulus_phase # (
 );
 
 // reg define
-reg  [2*_DATA_WIDTH - 1 :0]    source_data;        
-reg  [_DATA_WIDTH - 1 :0]     data_real;           
-reg  [_DATA_WIDTH - 1 :0]     data_imag;           
+reg  [2*_DATA_WIDTH - 2 :0]    source_data;        
+reg  [_DATA_WIDTH - 2 :0]     data_real;           
+reg  [_DATA_WIDTH - 2 :0]     data_imag;           
 reg  [_DATA_WIDTH - 1 :0]     source_valid_d;
 reg  [_DATA_WIDTH - 1 :0]     source_eop_d;
 wire [15:0] data_modulus_cordic;
@@ -44,15 +44,15 @@ always @ (posedge clk or negedge rst_n) begin
         data_imag   <= 'd0;
     end
     else begin
-        if(source_real[_DATA_WIDTH] == 1'b0)             
-            data_real <= source_real[_DATA_WIDTH - 1 :0];
+        if(source_real[_DATA_WIDTH - 1] == 1'b0)             
+            data_real <= source_real[_DATA_WIDTH - 2 :0];
         else
-            data_real <= ~source_real[_DATA_WIDTH - 1 :0] + 1'b1;
+            data_real <= ~source_real[_DATA_WIDTH - 2 :0] + 1'b1;
             
-        if(source_imag[_DATA_WIDTH] == 1'b0)             
-            data_imag <= source_imag[_DATA_WIDTH - 1 :0];
+        if(source_imag[_DATA_WIDTH - 1] == 1'b0)             
+            data_imag <= source_imag[_DATA_WIDTH - 2 :0];
         else
-            data_imag <= ~source_imag[_DATA_WIDTH - 1 :0] + 1'b1;
+            data_imag <= ~source_imag[_DATA_WIDTH - 2 :0] + 1'b1;
 
         source_data <= (data_real * data_real) + (data_imag * data_imag); 
     end
@@ -113,7 +113,7 @@ cordic_1 u_cordic_1 (
     .aclken(aclken),
     .aresetn(rst_n),
     .s_axis_cartesian_tvalid(source_valid),
-    .s_axis_cartesian_tdata({source_imag[_DATA_WIDTH],source_imag, source_real[_DATA_WIDTH],source_real}),
+    .s_axis_cartesian_tdata({source_imag[_DATA_WIDTH-1],source_imag[_DATA_WIDTH-1],source_imag,source_real[_DATA_WIDTH-1],source_real[_DATA_WIDTH-1],source_real}),
     .m_axis_dout_tvalid(phase_valid),
     .m_axis_dout_tdata(data_phase)
 );
